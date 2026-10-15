@@ -40,6 +40,7 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 4px;
+      flex-wrap: wrap;
     }
 
     .util-btn {
@@ -50,6 +51,12 @@
       border-radius: 999px;
       font-size: 0.72rem;
       cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .util-btn:hover {
+      border-color: #ffffff;
+      background: #27272a;
     }
 
     #mobileModeBtn {
@@ -57,7 +64,7 @@
     }
 
     /* =====================================================================
-       COMPACT LOWER-THIRD STAGE (Single Title + Auto-Swiping Image Slider)
+       COMPACT LOWER-THIRD STAGE + INTRO WORD DISPLAY
        ===================================================================== */
     .stage-area {
       width: 100%;
@@ -69,6 +76,33 @@
       justify-content: center;
       position: relative;
       margin-bottom: 10px;
+    }
+
+    .intro-word-banner {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 64px;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: 0.22em;
+    }
+
+    .intro-word-banner.active {
+      display: flex;
+    }
+
+    .intro-letter {
+      display: inline-block;
+      color: #ffffff;
+      text-shadow: 0 0 22px #ffffff, 0 0 10px rgba(255, 255, 255, 0.8);
+      animation: letterPop 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes letterPop {
+      from { opacity: 0; transform: translateY(10px) scale(0.75); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .idle-hint {
@@ -168,7 +202,7 @@
       transform: scale(1.2);
     }
 
-    /* Lower-Third Text Side (Clean Single Title + Description) */
+    /* Lower-Third Text Side */
     .lt-info {
       flex: 1;
       padding: 16px 18px;
@@ -319,13 +353,14 @@
     .keycap.w-fill  { flex: 1.5;  aspect-ratio: auto; }
 
     /* =====================================================================
-       SUBTLE DIMMING + STRONG NEON GLOW ON PRESSED KEY
+       SUBTLE DIMMING + STRONG NEON GLOW ON PRESSED OR INTRO-LIT KEY
        ===================================================================== */
     .keyboard-chassis.dim-mode .keycap:not(.active-key) {
       opacity: 0.62;
     }
 
-    .keycap.active-key {
+    .keycap.active-key,
+    .keycap.intro-lit {
       opacity: 1 !important;
       background: rgba(255, 255, 255, 0.34);
       border-color: #ffffff;
@@ -337,7 +372,8 @@
       z-index: 2;
     }
 
-    .keycap.active-key::after {
+    .keycap.active-key::after,
+    .keycap.intro-lit::after {
       border-color: #ffffff;
       box-shadow: inset 0 0 10px #ffffff;
     }
@@ -435,11 +471,14 @@
 <body>
 
   <div class="utility-bar">
+    <button class="util-btn" id="replayIntroBtn">↻ Replay Intro</button>
     <button class="util-btn" id="mobileModeBtn">📱 Switch to Full Miniature Keyboard</button>
   </div>
 
-  <!-- Compact Lower-Third Display Box -->
+  <!-- Compact Lower-Third Display Box & Intro Word Banner -->
   <div class="stage-area">
+    <div class="intro-word-banner" id="introWordBanner"></div>
+
     <div class="idle-hint" id="idleHint">
       Press or tap any key to light it up &amp; open our memory
     </div>
@@ -614,9 +653,9 @@
 
   <script>
     // =========================================================================
-    // 1. MEMORIES DATA (With your personal descriptions & multi-image support)
+    // 1. MEMORIES DATA (Your exact custom descriptions)
     // =========================================================================
-    let KEY_MEMORIES = {
+    const KEY_MEMORIES = {
       "A":  { title: "Anniversary", sub: "Celebrating us and every milestone with my sayang.", files: ["anniversary celebrating.jpeg"] },
       "@":  { title: "Always & Forever", sub: "Celebrating us and every milestone with my sayang.", files: ["anniversary celebrating.jpeg"] },
       "B":  { title: "Birthday Celebration", sub: "Candlelight, cake, and making a wish together.", files: ["birthdaycelebration.jpeg"] },
@@ -631,44 +670,31 @@
       "J":  { title: "Jeep Ride", sub: "Our first and coldest adventure together.", files: ["jeepride.jpeg"] },
       "K":  { title: "Kart Racing", sub: "We beat every single child on the track.", files: ["kart.jpeg"] },
       "L":  { title: "Light Show", sub: "A night full of glowing lights — as beautiful as you.", files: ["lightshow.jpeg", "lightshow2.jpeg"] },
-      "M":  { title: "Movie Night", sub: "Lean back, popcorn  and enjoy", files: ["moviedate.jpeg"] },
+      "M":  { title: "Movie Night", sub: "Lean back, popcorn and enjoy", files: ["moviedate.jpeg"] },
       "N":  { title: "New Year's Eve", sub: "Riding in the new year together", files: ["newyearcelebrations.jpeg"] },
       "O":  { title: "Island Hopping", sub: "Exploring Bintan and it's peaceful beauty", files: ["oceanview.jpeg"] },
       "P":  { title: "Photobooth", sub: "Capturing our memories with extra attributes.", files: ["photobooth.jpeg", "photobooth2.jpeg"] },
       "Q":  { title: "Quality Time", sub: "No rush, no distractions — just us.", files: ["qualitytime.jpeg", "qualitytime2.jpeg"] },
-      "R":  { title: "Reading Together", sub: "Quiet bookstore moments, was fun .", files: ["read.jpeg"] },
+      "R":  { title: "Reading Together", sub: "Quiet bookstore moments, was fun.", files: ["read.jpeg"] },
       "S":  { title: "Singapore", sub: "Welcome to Singapore, we aren't singa yet", files: ["singapore.jpeg", "singapore2.jpeg"] },
       "T":  { title: "Prambanan, Jogja", sub: "Temple run through Prambanan temples", files: ["templerun.jpeg"] },
       "U":  { title: "Universal Studios", sub: "Pure, endless joy from start to finish.", files: ["universalstudios.jpeg"] },
       "V":  { title: "Kawah Ijen", sub: "We reached the top and had a breathtaking view, thank you sayang!", files: ["volcano.jpeg"] },
       "W":  { title: "Waterpark", sub: "It was fun, chaotic, and something totally different.", files: ["waterpark.jpeg"] },
       "X":  { title: "X-plore", sub: "Because each time we meet, we need to catch up and make new memories.", files: ["explore.jpeg"] },
-      "Y":  { title: "Yapping", sub: "Endless talkstogether.", files: ["yapping.jpeg"] },
+      "Y":  { title: "Yapping", sub: "Endless talks together.", files: ["yapping.jpeg"] },
       "Z":  { title: "Zen", sub: "Peace is just being right there with you, sayang.", files: ["zen.jpeg"] }
     };
 
-    // Load memories.json if present in the repo (supports both new and old format)
-    fetch("memories.json")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json) => {
-        if (!json) return;
-        Object.keys(json).forEach((k) => {
-          if (Array.isArray(json[k])) {
-            KEY_MEMORIES[k] = {
-              title: json[k][0].title,
-              sub: KEY_MEMORIES[k] ? KEY_MEMORIES[k].sub : json[k][0].sub,
-              files: json[k].map((entry) => entry.file)
-            };
-          } else {
-            KEY_MEMORIES[k] = json[k];
-          }
-        });
-      })
-      .catch(() => {});
+    // =========================================================================
+    // 2. WORD-BY-WORD INTRO ANIMATION
+    //    Sequence: AULI@, I, LOVE, YOU, CUZ, YOU, ARE, SPECIAL
+    // =========================================================================
+    const INTRO_WORDS = ["AULI@", "I", "LOVE", "YOU", "CUZ", "YOU", "ARE", "SPECIAL"];
+    const LETTER_DELAY = 360; // ms between letters in a word
+    const WORD_HOLD    = 850; // ms to keep the completed word lit before next word
 
-    // =========================================================================
-    // 2. AUTO-SWIPE CAROUSEL & KEY SELECTION LOGIC
-    // =========================================================================
+    let introTimers = [];
     let currentKey = null;
     let currentSlideIdx = 0;
     let autoSwipeTimer = null;
@@ -676,10 +702,71 @@
     const chassis = document.getElementById("kbChassis");
     const lowerthirdBox = document.getElementById("lowerthirdBox");
     const idleHint = document.getElementById("idleHint");
+    const introBanner = document.getElementById("introWordBanner");
     const sliderTrack = document.getElementById("ltSliderTrack");
     const slideDots = document.getElementById("ltSlideDots");
 
-    // Add 2-dot indicators on keys with 2 images
+    function stopIntroAnimation() {
+      introTimers.forEach(clearTimeout);
+      introTimers = [];
+      document.querySelectorAll(".keycap.intro-lit").forEach((el) => el.classList.remove("intro-lit"));
+      introBanner.classList.remove("active");
+      introBanner.innerHTML = "";
+    }
+
+    function playIntroSequence() {
+      stopIntroAnimation();
+      clearSelection(false);
+
+      idleHint.style.display = "none";
+      introBanner.classList.add("active");
+
+      let elapsed = 250;
+
+      INTRO_WORDS.forEach((word) => {
+        // Clear previous word's lit keys and start new word
+        const startWordTimer = setTimeout(() => {
+          document.querySelectorAll(".keycap.intro-lit").forEach((el) => el.classList.remove("intro-lit"));
+          introBanner.innerHTML = "";
+        }, elapsed);
+        introTimers.push(startWordTimer);
+
+        // Light up each letter of the current word 1-by-1 without dimming previous letters in the word
+        word.split("").forEach((ch) => {
+          elapsed += LETTER_DELAY;
+          const letterTimer = setTimeout(() => {
+            const keyBtn = document.querySelector(`.keycap[data-key="${ch}"]`);
+            if (keyBtn) {
+              keyBtn.classList.add("intro-lit");
+            }
+
+            const span = document.createElement("span");
+            span.className = "intro-letter";
+            span.textContent = ch;
+            introBanner.appendChild(span);
+          }, elapsed);
+          introTimers.push(letterTimer);
+        });
+
+        // Hold completed word before moving to the next word
+        elapsed += WORD_HOLD;
+      });
+
+      // Finish sequence and show idle prompt
+      const endTimer = setTimeout(() => {
+        stopIntroAnimation();
+        if (!currentKey) {
+          idleHint.style.display = "block";
+        }
+      }, elapsed + 300);
+      introTimers.push(endTimer);
+    }
+
+    document.getElementById("replayIntroBtn").addEventListener("click", playIntroSequence);
+
+    // =========================================================================
+    // 3. AUTO-SWIPE CAROUSEL & KEY SELECTION LOGIC
+    // =========================================================================
     document.querySelectorAll(".keycap[data-key]").forEach((btn) => {
       const k = btn.dataset.key;
       const entry = KEY_MEMORIES[k];
@@ -696,7 +783,7 @@
     });
 
     document.querySelectorAll("[data-clear]").forEach((btn) => {
-      btn.addEventListener("click", clearSelection);
+      btn.addEventListener("click", () => clearSelection(true));
     });
 
     document.querySelectorAll("[data-cycle]").forEach((btn) => {
@@ -720,6 +807,9 @@
     function selectKey(k) {
       const entry = KEY_MEMORIES[k];
       if (!entry) return;
+
+      // Stop intro if user presses a key while it's running
+      stopIntroAnimation();
 
       // If pressing the same multi-image key again, swipe immediately to next image
       if (currentKey === k && entry.files.length > 1) {
@@ -745,7 +835,6 @@
       idleHint.style.display = "none";
       lowerthirdBox.classList.add("visible");
 
-      // Build slides inside the horizontal track
       sliderTrack.innerHTML = "";
       sliderTrack.style.transform = "translateX(0%)";
 
@@ -756,7 +845,6 @@
         sliderTrack.appendChild(slide);
       });
 
-      // Build indicator dots & start auto-swiping if this key has 2+ images
       slideDots.innerHTML = "";
       if (entry.files.length > 1) {
         slideDots.classList.add("show");
@@ -773,7 +861,6 @@
         slideDots.classList.remove("show");
       }
 
-      // Single clean title + personal description
       document.getElementById("ltKeyPill").textContent = k === "@" ? "2 é @" : (k === "E2" ? "E µ" : k);
       document.getElementById("ltTitle").textContent = entry.title;
       document.getElementById("ltSub").textContent = entry.sub;
@@ -796,20 +883,21 @@
       }
     }
 
-    function clearSelection() {
+    function clearSelection(showHint = true) {
       clearInterval(autoSwipeTimer);
       currentKey = null;
       chassis.classList.remove("dim-mode");
       document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
       lowerthirdBox.classList.remove("visible");
-      idleHint.style.display = "block";
+      if (showHint) idleHint.style.display = "block";
     }
 
     lowerthirdBox.addEventListener("click", () => stepSlide(1, true));
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        clearSelection();
+        stopIntroAnimation();
+        clearSelection(true);
       } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         stepSlide(1, true);
       } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
@@ -831,6 +919,9 @@
         ? "📱 Switch to Full Miniature Keyboard"
         : "📱 Switch to Large Mobile Keys";
     });
+
+    // Start intro word sequence automatically on page load
+    window.addEventListener("DOMContentLoaded", playIntroSequence);
   </script>
 </body>
 </html>

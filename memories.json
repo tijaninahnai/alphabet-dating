@@ -1,91 +1,142 @@
 {
-  "A": [
-    { "file": "anniversary celebrating.jpeg", "title": "Anniversary Celebrating", "sub": "Celebrating our special day" }
-  ],
-  "@": [
-    { "file": "anniversary celebrating.jpeg", "title": "Anniversary Celebrating (@)", "sub": "Second A • Special memory" }
-  ],
-  "B": [
-    { "file": "birthdaycelebration.jpeg", "title": "Birthday Celebration", "sub": "Making a birthday wish" }
-  ],
-  "C": [
-    { "file": "cycling.jpeg", "title": "Cycling", "sub": "Out on a bike ride together" }
-  ],
-  "D": [
-    { "file": "disneydate.jpeg", "title": "Disney Date", "sub": "Cozy Disney date" }
-  ],
-  "E": [
-    { "file": "eating1.jpeg", "title": "Eating Together #1", "sub": "Press E again for photo 2" },
-    { "file": "eating2.jpeg", "title": "Eating Together #2", "sub": "Press E again for photo 1" }
-  ],
-  "E2": [
-    { "file": "explore.jpeg", "title": "Explore", "sub": "Exploring new places together" }
-  ],
-  "F": [
-    { "file": "food festival.jpeg", "title": "Food Festival", "sub": "Tasting treats at the festival" }
-  ],
-  "G": [
-    { "file": "game.jpeg", "title": "Game Time", "sub": "Playful moments together" }
-  ],
-  "H": [
-    { "file": "hike.jpeg", "title": "Hike", "sub": "Out on the trail" }
-  ],
-  "I": [
-    { "file": "iceskating.jpeg", "title": "Ice Skating", "sub": "Gliding on the ice rink" }
-  ],
-  "J": [
-    { "file": "jeepride.jpeg", "title": "Jeep Ride", "sub": "Mountain jeep adventure" }
-  ],
-  "K": [
-    { "file": "kart.jpeg", "title": "Kart Racing", "sub": "Racing on the track" }
-  ],
-  "L": [
-    { "file": "lightshow.jpeg", "title": "Light Show #1", "sub": "Press L again for photo 2" },
-    { "file": "lightshow2.jpeg", "title": "Light Show #2", "sub": "Press L again for photo 1" }
-  ],
-  "M": [
-    { "file": "moviedate.jpeg", "title": "Movie Date", "sub": "Cinema night together" }
-  ],
-  "N": [
-    { "file": "newyearcelebrations.jpeg", "title": "New Year Celebrations", "sub": "Ringing in the New Year" }
-  ],
-  "O": [
-    { "file": "oceanview.jpeg", "title": "Ocean View", "sub": "By the tropical sea" }
-  ],
-  "P": [
-    { "file": "photobooth.jpeg", "title": "Photobooth #1", "sub": "Press P again for photo 2" },
-    { "file": "photobooth2.jpeg", "title": "Photobooth #2", "sub": "Press P again for photo 1" }
-  ],
-  "Q": [
-    { "file": "qualitytime.jpeg", "title": "Quality Time #1", "sub": "Press Q again for photo 2" },
-    { "file": "qualitytime2.jpeg", "title": "Quality Time #2", "sub": "Press Q again for photo 1" }
-  ],
-  "R": [
-    { "file": "read.jpeg", "title": "Reading Together", "sub": "Bookstore date" }
-  ],
-  "S": [
-    { "file": "singapore.jpeg", "title": "Singapore #1", "sub": "Press S again for photo 2" },
-    { "file": "singapore2.jpeg", "title": "Singapore #2", "sub": "Press S again for photo 1" }
-  ],
-  "T": [
-    { "file": "templerun.jpeg", "title": "Temple Run", "sub": "Visiting historic temples" }
-  ],
-  "U": [
-    { "file": "universalstudios.jpeg", "title": "Universal Studios", "sub": "Theme park adventure" }
-  ],
-  "V": [
-    { "file": "volcano.jpeg", "title": "Volcano View", "sub": "Exploring the volcano together" }
-  ],
-  "W": [
-    { "file": "waterpark.jpeg", "title": "Waterpark", "sub": "Sunshine & water slides" }
-  ],
-  "X": [
-    { "file": "explore.jpeg", "title": "Explore", "sub": "Adventuring side by side" }
-  ],
-  "Y": [
-    { "file": "yapping.jpeg", "title": "Yapping", "sub": "Endless conversations" }
-  ],
-  "Z": [
-    { "file": "zen.jpeg", "title": "Zen Waterfall", "sub": "Peaceful waterfall vibes" }
-  ]
+  "A": {
+    "title": "Anniversary",
+    "sub": "Celebrating us and every milestone with my sayang.",
+    "files": ["anniversary celebrating.jpeg"]
+  },
+  "@": {
+    "title": "Always & Forever",
+    "sub": "Celebrating us and every milestone with my sayang.",
+    "files": ["anniversary celebrating.jpeg"]
+  },
+  "B": {
+    "title": "Birthday Celebration",
+    "sub": "Candlelight, cake, and making a wish together.",
+    "files": ["birthdaycelebration.jpeg"]
+  },
+  "C": {
+    "title": "Cycling in Singapore",
+    "sub": "Riding through a beautiful park full of hidden treasures.",
+    "files": ["cycling.jpeg"]
+  },
+  "D": {
+    "title": "Disney Date",
+    "sub": "Cozying up, talking, and reading Disney stories together.",
+    "files": ["disneydate.jpeg"]
+  },
+  "E": {
+    "title": "Dinner Dates",
+    "sub": "Dinner dates are the best fr — since I'm not big on Indonesian food, we always make sure we eat good.",
+    "files": ["eating1.jpeg", "eating2.jpeg"]
+  },
+  "E2": {
+    "title": "X-plore",
+    "sub": "Because each time we meet, we need to catch up and make new memories.",
+    "files": ["explore.jpeg"]
+  },
+  "F": {
+    "title": "Food Festival",
+    "sub": "The moment that finally made me fall in love with Indonesian food.",
+    "files": ["food festival.jpeg"]
+  },
+  "G": {
+    "title": "Game Time",
+    "sub": "Being passionate and trying out a game together for the first time.",
+    "files": ["game.jpeg"]
+  },
+  "H": {
+    "title": "Ocarina Beach Hike",
+    "sub": "Walking along the seaside together at Ocarina Beach Resort.",
+    "files": ["hike.jpeg"]
+  },
+  "I": {
+    "title": "Ice Skating",
+    "sub": "Cooling off on the ice together.",
+    "files": ["iceskating.jpeg"]
+  },
+  "J": {
+    "title": "Jeep Ride",
+    "sub": "Our first and coldest adventure together.",
+    "files": ["jeepride.jpeg"]
+  },
+  "K": {
+    "title": "Kart Racing",
+    "sub": "We beat every single child on the track.",
+    "files": ["kart.jpeg"]
+  },
+  "L": {
+    "title": "Light Show",
+    "sub": "A night full of glowing lights — as beautiful as you.",
+    "files": ["lightshow.jpeg", "lightshow2.jpeg"]
+  },
+  "M": {
+    "title": "Movie Night",
+    "sub": "Lean back, popcorn in hand, and just enjoyed.",
+    "files": ["moviedate.jpeg"]
+  },
+  "N": {
+    "title": "New Year's Eve",
+    "sub": "Ringing in the new year side by side.",
+    "files": ["newyearcelebrations.jpeg"]
+  },
+  "O": {
+    "title": "Island Hopping",
+    "sub": "Out on the water at the neighboring island of Batam.",
+    "files": ["oceanview.jpeg"]
+  },
+  "P": {
+    "title": "Photobooth",
+    "sub": "Capturing our favorite faces and memories in every strip.",
+    "files": ["photobooth.jpeg", "photobooth2.jpeg"]
+  },
+  "Q": {
+    "title": "Quality Time",
+    "sub": "No rush, no distractions — just us.",
+    "files": ["qualitytime.jpeg", "qualitytime2.jpeg"]
+  },
+  "R": {
+    "title": "Reading Together",
+    "sub": "Quiet bookstore moments side by side.",
+    "files": ["read.jpeg"]
+  },
+  "S": {
+    "title": "Singapore",
+    "sub": "Exploring the city and making heart hands by Marina Bay.",
+    "files": ["singapore.jpeg", "singapore2.jpeg"]
+  },
+  "T": {
+    "title": "Prambanan, Jogja",
+    "sub": "Temple run through the iconic Prambanan temples in Jogja.",
+    "files": ["templerun.jpeg"]
+  },
+  "U": {
+    "title": "Universal Studios",
+    "sub": "Pure, endless joy from start to finish.",
+    "files": ["universalstudios.jpeg"]
+  },
+  "V": {
+    "title": "Kawah Ijen",
+    "sub": "Standing together at the breathtaking Kawah Ijen crater.",
+    "files": ["volcano.jpeg"]
+  },
+  "W": {
+    "title": "Waterpark",
+    "sub": "It was fun, chaotic, and something totally different.",
+    "files": ["waterpark.jpeg"]
+  },
+  "X": {
+    "title": "X-plore",
+    "sub": "Because each time we meet, we need to catch up and make new memories.",
+    "files": ["explore.jpeg"]
+  },
+  "Y": {
+    "title": "Yapping",
+    "sub": "Endless talks, stories, and laughs together.",
+    "files": ["yapping.jpeg"]
+  },
+  "Z": {
+    "title": "Zen",
+    "sub": "Peace is just being right here with my sayang.",
+    "files": ["zen.jpeg"]
+  }
 }

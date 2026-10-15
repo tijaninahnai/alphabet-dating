@@ -6,7 +6,7 @@
   <title>Alphabet Dating — Memory Keyboard</title>
   <style>
     :root {
-      --bg: #070709;
+      --bg: #050508;
       --kb-bg: #030304;
       --kb-frame: #ffffff;
       --key-outer: #d4d4d8;
@@ -24,7 +24,9 @@
     body {
       min-height: 100vh;
       min-height: 100dvh;
-      background: radial-gradient(circle at 50% 15%, #16161d 0%, var(--bg) 75%);
+      background:
+        radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.08) 0%, transparent 55%),
+        radial-gradient(circle at 50% 0%, #171721 0%, var(--bg) 75%);
       color: #ffffff;
       font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
@@ -32,59 +34,35 @@
       align-items: center;
       justify-content: space-between;
       padding: 14px 10px 18px;
-      overflow-x: hidden;
-    }
-
-    .utility-bar {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 4px;
-      flex-wrap: wrap;
-    }
-
-    .util-btn {
-      background: #141418;
-      border: 1px solid #52525b;
-      color: #f4f4f5;
-      padding: 5px 12px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-
-    .util-btn:hover {
-      border-color: #ffffff;
-      background: #27272a;
+      overflow: hidden;
     }
 
     /* =====================================================================
-       COMPACT LOWER-THIRD STAGE + INTRO WORD DISPLAY
+       STAGE AREA: 3D INTRO TILES, SINGLE LOWER-THIRD, & 3D ESC COVERFLOW
        ===================================================================== */
     .stage-area {
       width: 100%;
       max-width: 1180px;
-      min-height: 225px;
+      min-height: 240px;
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
-      margin-bottom: 10px;
+      perspective: 1200px;
+      margin-bottom: 8px;
     }
 
+    /* 1. 3D Intro Word Tiles */
     .intro-word-banner {
       display: none;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      min-height: 64px;
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 800;
-      letter-spacing: 0.22em;
+      gap: clamp(8px, 2vw, 14px);
+      min-height: 80px;
+      perspective: 900px;
+      transform-style: preserve-3d;
     }
 
     .intro-word-banner.active {
@@ -92,27 +70,63 @@
     }
 
     .intro-letter {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: clamp(42px, 8vw, 62px);
+      height: clamp(50px, 9.5vw, 72px);
+      padding: 0 12px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.05));
+      border: 2px solid #ffffff;
+      font-size: clamp(1.5rem, 3.8vw, 2.4rem);
+      font-weight: 800;
       color: #ffffff;
-      text-shadow: 0 0 22px #ffffff, 0 0 10px rgba(255, 255, 255, 0.8);
-      animation: letterPop 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      text-shadow: 0 0 18px #ffffff;
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.75),
+        0 0 24px rgba(255, 255, 255, 0.55),
+        inset 0 0 14px rgba(255, 255, 255, 0.45);
+      transform-origin: center bottom;
+      animation: tile3DIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
-    @keyframes letterPop {
-      from { opacity: 0; transform: translateY(10px) scale(0.75); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    .intro-word-banner.word-complete .intro-letter {
+      animation: wordCompletePulse 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    .idle-hint {
-      color: #a1a1aa;
-      font-size: 0.85rem;
-      letter-spacing: 0.04em;
-      text-align: center;
-      padding: 12px 20px;
-      border: 1px dashed #3f3f46;
-      border-radius: 999px;
+    .intro-word-banner.word-exit .intro-letter {
+      animation: wordSweepOut 0.26s ease-in forwards;
     }
 
+    @keyframes tile3DIn {
+      0% {
+        opacity: 0;
+        transform: translateY(36px) rotateX(-70deg) scale(0.5);
+        filter: blur(6px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes wordCompletePulse {
+      0%   { transform: translateY(0) scale(1); }
+      45%  { transform: translateY(-8px) scale(1.1); box-shadow: 0 0 38px #ffffff, inset 0 0 20px #ffffff; }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes wordSweepOut {
+      to {
+        opacity: 0;
+        transform: translateY(-22px) scale(0.85);
+        filter: blur(4px);
+      }
+    }
+
+    /* 2. Single Key Lower-Third Box with 3D Spring Entrance & Glass Shine */
     .lowerthird-box {
       position: relative;
       display: none;
@@ -121,42 +135,59 @@
       border: 2px solid #ffffff;
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9), 0 0 28px rgba(255, 255, 255, 0.22);
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.92),
+        0 0 30px rgba(255, 255, 255, 0.28);
       max-width: 490px;
       width: 100%;
       height: 210px;
       cursor: pointer;
-      animation: ltSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transform-style: preserve-3d;
     }
 
     .lowerthird-box.visible {
       display: flex;
+      animation: cardSpringIn 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
-    @keyframes ltSlideUp {
-      from { opacity: 0; transform: translateY(12px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    /* Smooth Flowing Progress Bar for ESC A-to-Z Reel */
-    .reel-progress {
+    /* Diagonal light sweep across card on open */
+    .lowerthird-box::after {
+      content: "";
       position: absolute;
-      left: 0;
-      bottom: 0;
-      height: 3px;
-      width: 0%;
-      background: linear-gradient(90deg, rgba(255,255,255,0.4), #ffffff);
-      box-shadow: 0 0 10px #ffffff;
-      z-index: 10;
-      opacity: 0;
-      transition: width 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+      top: 0;
+      left: -120%;
+      width: 70%;
+      height: 100%;
+      background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.22) 50%,
+        transparent 80%
+      );
+      pointer-events: none;
+      z-index: 6;
     }
 
-    .reel-progress.active {
-      opacity: 1;
+    .lowerthird-box.shine::after {
+      animation: glassSweep 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    /* Auto-Swipe & Flowing Reel Carousel Viewport */
+    @keyframes glassSweep {
+      from { left: -80%; }
+      to   { left: 140%; }
+    }
+
+    @keyframes cardSpringIn {
+      0% {
+        opacity: 0;
+        transform: translateY(28px) rotateX(-22deg) scale(0.88);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg) scale(1);
+      }
+    }
+
     .lt-photo-wrap {
       position: relative;
       width: 170px;
@@ -172,7 +203,7 @@
       width: 100%;
       height: 100%;
       will-change: transform;
-      transition: transform 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .lt-slide {
@@ -188,15 +219,8 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      transform: scale(1.04);
-      transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .lt-slide.active-slide img {
-      transform: scale(1);
-    }
-
-    /* Small Dots on Photo When Auto-Swiping 2 Images */
     .lt-slide-dots {
       position: absolute;
       bottom: 8px;
@@ -204,7 +228,7 @@
       transform: translateX(-50%);
       display: none;
       gap: 5px;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.65);
       padding: 4px 8px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.25);
@@ -224,17 +248,16 @@
 
     .lt-slide-dots span.active-dot {
       background: #ffffff;
-      transform: scale(1.2);
+      transform: scale(1.25);
     }
 
-    /* Lower-Third Text Side with Smooth Transition */
     .lt-info {
       flex: 1;
       padding: 16px 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: linear-gradient(135deg, #141418 0%, #070709 100%);
+      background: linear-gradient(135deg, #15151b 0%, #070709 100%);
       min-width: 0;
     }
 
@@ -257,22 +280,11 @@
       color: #000000;
       font-weight: 800;
       font-size: 0.92rem;
-      box-shadow: 0 0 14px rgba(255, 255, 255, 0.65);
-      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .lt-key-pill.pop {
-      transform: scale(1.14);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.75);
     }
 
     .lt-text-group {
       margin-top: auto;
-      transition: opacity 0.24s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .lt-text-group.fade-out {
-      opacity: 0;
-      transform: translateY(7px);
     }
 
     .lt-title {
@@ -291,7 +303,106 @@
     }
 
     /* =====================================================================
-       BRIGHTER BLACK & WHITE AZERTY KEYBOARD
+       3. 3D COVERFLOW CARD CASCADE FOR ESC A-TO-Z REEL
+       ===================================================================== */
+    .reel-deck {
+      position: relative;
+      display: none;
+      width: 100%;
+      max-width: 900px;
+      height: 220px;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+      perspective: 1200px;
+    }
+
+    .reel-deck.active {
+      display: flex;
+    }
+
+    .reel-card {
+      position: absolute;
+      width: min(88vw, 460px);
+      height: 204px;
+      display: flex;
+      align-items: stretch;
+      background: #0b0b0e;
+      border: 2px solid #ffffff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 28px rgba(255, 255, 255, 0.25);
+      will-change: transform, opacity, filter;
+      transition:
+        transform 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.52s ease,
+        box-shadow 0.52s ease;
+      pointer-events: none;
+    }
+
+    .reel-card .lt-photo-wrap {
+      width: 162px;
+    }
+
+    .reel-card .lt-photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* 3D Coverflow Positions */
+    .reel-card[data-pos="0"] {
+      transform: translate3d(0%, 0px, 0px) rotateY(0deg) scale(1);
+      opacity: 1;
+      filter: brightness(1);
+      z-index: 10;
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.95), 0 0 36px rgba(255, 255, 255, 0.45);
+    }
+
+    .reel-card[data-pos="1"] {
+      transform: translate3d(54%, -4px, -140px) rotateY(-28deg) scale(0.84);
+      opacity: 0.52;
+      filter: brightness(0.65) blur(1px);
+      z-index: 7;
+    }
+
+    .reel-card[data-pos="2"] {
+      transform: translate3d(88%, -10px, -260px) rotateY(-40deg) scale(0.68);
+      opacity: 0.2;
+      filter: brightness(0.45) blur(2px);
+      z-index: 4;
+    }
+
+    .reel-card[data-pos="-1"] {
+      transform: translate3d(-54%, -4px, -140px) rotateY(28deg) scale(0.84);
+      opacity: 0.52;
+      filter: brightness(0.65) blur(1px);
+      z-index: 7;
+    }
+
+    .reel-card[data-pos="-2"] {
+      transform: translate3d(-88%, -10px, -260px) rotateY(40deg) scale(0.68);
+      opacity: 0.2;
+      filter: brightness(0.45) blur(2px);
+      z-index: 4;
+    }
+
+    .reel-card[data-pos="far-right"] {
+      transform: translate3d(115%, -16px, -360px) rotateY(-48deg) scale(0.55);
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .reel-card[data-pos="far-left"] {
+      transform: translate3d(-115%, -16px, -360px) rotateY(48deg) scale(0.55);
+      opacity: 0;
+      z-index: 1;
+    }
+
+    /* =====================================================================
+       BRIGHTER BLACK & WHITE AZERTY KEYBOARD + SHOCKWAVE RIPPLE
        ===================================================================== */
     .kb-outer {
       width: 100%;
@@ -336,7 +447,6 @@
       align-items: stretch;
     }
 
-    /* Mobile-only elements hidden on desktop */
     .mobile-only {
       display: none !important;
     }
@@ -356,7 +466,12 @@
       font-size: clamp(0.58rem, 1.12vw, 0.98rem);
       font-weight: 600;
       box-shadow: 0 2px 6px rgba(255, 255, 255, 0.06);
-      transition: opacity 0.28s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      transition:
+        opacity 0.25s ease,
+        transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        background 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
       min-width: 0;
       padding: 0;
     }
@@ -368,6 +483,23 @@
       border: 1.4px solid var(--key-inner);
       border-radius: clamp(4px, 0.7vw, 8px);
       pointer-events: none;
+    }
+
+    /* Expanding Neon Shockwave Ring on Key Trigger */
+    .keycap.pulse-wave::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 18px #ffffff;
+      pointer-events: none;
+      animation: keyShockwave 0.58s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes keyShockwave {
+      0%   { opacity: 0.95; transform: scale(0.95); }
+      100% { opacity: 0; transform: scale(1.48); }
     }
 
     .keycap:hover {
@@ -397,20 +529,20 @@
        SUBTLE DIMMING + STRONG NEON GLOW ON PRESSED OR INTRO-LIT KEY
        ===================================================================== */
     .keyboard-chassis.dim-mode .keycap:not(.active-key) {
-      opacity: 0.55;
+      opacity: 0.52;
     }
 
     .keycap.active-key,
     .keycap.intro-lit {
       opacity: 1 !important;
-      background: rgba(255, 255, 255, 0.34);
+      background: rgba(255, 255, 255, 0.36);
       border-color: #ffffff;
       box-shadow:
-        0 0 24px #ffffff,
-        0 0 10px rgba(255, 255, 255, 0.9),
-        inset 0 0 14px rgba(255, 255, 255, 0.85);
-      transform: translateY(-1px) scale(1.03);
-      z-index: 2;
+        0 0 26px #ffffff,
+        0 0 12px rgba(255, 255, 255, 0.95),
+        inset 0 0 14px rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px) scale(1.04);
+      z-index: 3;
     }
 
     .keycap.active-key::after,
@@ -471,15 +603,11 @@
     }
 
     /* =====================================================================
-       MOBILE KEYBOARD POLISH (Uniform 10-Unit Grid + Crisp Proportions)
+       CLEAN MOBILE AZERTY KEYBOARD (Just the keys + ESC button)
        ===================================================================== */
     @media (max-width: 768px) {
-      .utility-bar {
-        display: none;
-      }
-
       .stage-area {
-        min-height: 185px;
+        min-height: 195px;
       }
 
       .lowerthird-box {
@@ -487,8 +615,18 @@
         max-width: 96vw;
       }
 
-      .lt-photo-wrap {
+      .lt-photo-wrap,
+      .reel-card .lt-photo-wrap {
         width: 132px;
+      }
+
+      .reel-deck {
+        height: 184px;
+      }
+
+      .reel-card {
+        width: 90vw;
+        height: 172px;
       }
 
       .lt-title {
@@ -496,33 +634,33 @@
       }
 
       .lt-sub {
-        font-size: 0.76rem;
+        font-size: 0.75rem;
       }
 
-      .keyboard-chassis.mobile-touch {
+      .keyboard-chassis {
         padding: 10px 8px;
         border-radius: 22px;
         border-width: 2.5px;
       }
 
-      .keyboard-chassis.mobile-touch .kb-main {
+      .kb-main {
         gap: 6px;
       }
 
-      .keyboard-chassis.mobile-touch .kb-row {
+      .kb-row {
         gap: 4.5px;
       }
 
-      .keyboard-chassis.mobile-touch .kb-numpad,
-      .keyboard-chassis.mobile-touch .hide-mobile {
+      .kb-numpad,
+      .hide-mobile {
         display: none !important;
       }
 
-      .keyboard-chassis.mobile-touch .mobile-only {
+      .mobile-only {
         display: flex !important;
       }
 
-      .keyboard-chassis.mobile-touch .keycap {
+      .keycap {
         aspect-ratio: auto;
         height: 46px;
         font-size: 0.92rem;
@@ -530,49 +668,36 @@
         border-width: 1.2px;
       }
 
-      .keyboard-chassis.mobile-touch .keycap::after {
+      .keycap::after {
         inset: 1.5px;
         border-width: 1.1px;
         border-radius: 6px;
       }
 
-      /* Sleek top pill row on mobile */
-      .keyboard-chassis.mobile-touch .keycap.pill {
-        height: 27px;
-        border-radius: 999px;
-        font-size: 0.68rem;
-      }
-
-      .keyboard-chassis.mobile-touch .keycap.pill::after {
-        border-radius: 999px;
-      }
-
-      /* Prevent number-row corner legends from colliding on narrow mobile keys */
-      .keyboard-chassis.mobile-touch .lbl-tl {
+      .lbl-tl {
         top: 4px;
         left: 4px;
         font-size: 0.54em;
         opacity: 0.88;
       }
 
-      .keyboard-chassis.mobile-touch .lbl-br {
+      .lbl-br {
         bottom: 4px;
         right: 4px;
         font-size: 0.54em;
         opacity: 0.88;
       }
 
-      /* Nudge letter slightly up when it has 2-photo dots below it */
-      .keyboard-chassis.mobile-touch .keycap.has-dots .lbl-c {
+      .keycap.has-dots .lbl-c {
         transform: translateY(-2px);
       }
 
-      .keyboard-chassis.mobile-touch .multi-dots {
+      .multi-dots {
         bottom: 5px;
         gap: 2px;
       }
 
-      .keyboard-chassis.mobile-touch .multi-dots span {
+      .multi-dots span {
         width: 3px;
         height: 3px;
       }
@@ -581,17 +706,9 @@
 </head>
 <body>
 
-  <div class="utility-bar">
-    <button class="util-btn" id="replayIntroBtn">↻ Replay Intro</button>
-  </div>
-
-  <!-- Compact Lower-Third Display Box & Intro Word Banner -->
+  <!-- Stage: 3D Intro Tiles, Single Lower-Third Box, and 3D ESC Coverflow Deck -->
   <div class="stage-area">
     <div class="intro-word-banner" id="introWordBanner"></div>
-
-    <div class="idle-hint" id="idleHint">
-      Press or tap any key to light it up &amp; open our memory
-    </div>
 
     <div class="lowerthird-box" id="lowerthirdBox">
       <div class="lt-photo-wrap">
@@ -604,26 +721,20 @@
         </div>
         <div class="lt-text-group" id="ltTextGroup">
           <div class="lt-title" id="ltTitle">Anniversary</div>
-          <div class="lt-sub" id="ltSub">Celebrating us and every milestone together.</div>
+          <div class="lt-sub" id="ltSub">Celebrating us and every milestone with my sayang.</div>
         </div>
       </div>
-      <div class="reel-progress" id="reelProgress"></div>
     </div>
+
+    <!-- 3D Coverflow Deck for ESC Alphabetical Showcase -->
+    <div class="reel-deck" id="reelDeck"></div>
   </div>
 
-  <!-- Brighter Black & White Belgian AZERTY Keyboard -->
+  <!-- Belgian AZERTY Keyboard -->
   <div class="kb-outer">
-    <div class="keyboard-chassis mobile-touch" id="kbChassis">
+    <div class="keyboard-chassis" id="kbChassis">
 
       <div class="kb-main">
-        <!-- Mobile-Only Top Pill Row (Gives mobile direct access to ESC A-Z reel, Replay, and Full KB) -->
-        <div class="kb-row mobile-only">
-          <button type="button" class="keycap pill" data-esc="true"><span class="lbl-sm">esc • A–Z</span></button>
-          <button type="button" class="keycap pill" data-replay="true"><span class="lbl-sm">↻ intro</span></button>
-          <button type="button" class="keycap pill" data-toggle-kb="true"><span class="lbl-sm">full kb</span></button>
-          <button type="button" class="keycap pill" data-clear="true"><span class="lbl-sm">clear</span></button>
-        </div>
-
         <!-- Row 1: Desktop Function Pill Keys -->
         <div class="kb-row hide-mobile">
           <button type="button" class="keycap pill" data-esc="true"><span class="lbl-sm">esc</span></button>
@@ -643,7 +754,7 @@
           <button type="button" class="keycap pill" data-clear="true"><span class="lbl-sm">delete</span></button>
         </div>
 
-        <!-- Row 2: Number Row (10 keys on mobile: 1 through 0) -->
+        <!-- Row 2: Number Row (1 through 0) -->
         <div class="kb-row">
           <button type="button" class="keycap w-half hide-mobile"><span class="lbl-tl">³</span><span class="lbl-bl">²</span></button>
           <button type="button" class="keycap"><span class="lbl-tl">1</span><span class="lbl-c">&amp;</span><span class="lbl-br">|</span></button>
@@ -660,7 +771,7 @@
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">-</span><span class="lbl-c">_</span></button>
         </div>
 
-        <!-- Row 3: AZERTY Row (10 keys on mobile: A through P) -->
+        <!-- Row 3: AZERTY Row -->
         <div class="kb-row">
           <button type="button" class="keycap w-tab hide-mobile"><span class="lbl-tl">|←</span><span class="lbl-bl">→|</span></button>
           <button type="button" class="keycap" data-key="A"><span class="lbl-c">A</span></button>
@@ -678,7 +789,7 @@
           <button type="button" class="keycap w-fill hide-mobile" data-key="E2"><span class="lbl-tl">E</span><span class="lbl-c">µ</span><span class="lbl-br">`</span></button>
         </div>
 
-        <!-- Row 4: QSDFGHJKLM Row (10 keys on mobile: Q through M) -->
+        <!-- Row 4: QSDFGHJKLM Row -->
         <div class="kb-row">
           <button type="button" class="keycap w-caps hide-mobile"><span class="lbl-sm">shift lock</span></button>
           <button type="button" class="keycap" data-key="Q"><span class="lbl-c">Q</span></button>
@@ -695,18 +806,18 @@
           <button type="button" class="keycap w-fill hide-mobile"><span class="lbl-c">↵</span></button>
         </div>
 
-        <!-- Row 5: WXCVBN Row (Balanced 10-unit width on mobile: ↑ [1.5] + W..N [6] + ?, [1] + Eµ [1.5]) -->
+        <!-- Row 5: WXCVBN Row (On mobile: ESC on left, W X C V B N in center, E µ on right) -->
         <div class="kb-row">
           <button type="button" class="keycap w-shift hide-mobile"><span class="lbl-c">↑</span></button>
-          <button type="button" class="keycap mobile-only" style="flex: 1.5;" data-esc="true"><span class="lbl-c">↑</span></button>
+          <button type="button" class="keycap mobile-only" style="flex: 1.65;" data-esc="true"><span class="lbl-sm" style="font-weight:700;">esc</span></button>
           <button type="button" class="keycap" data-key="W"><span class="lbl-c">W</span></button>
           <button type="button" class="keycap" data-key="X"><span class="lbl-c">X</span></button>
           <button type="button" class="keycap" data-key="C"><span class="lbl-c">C</span></button>
           <button type="button" class="keycap" data-key="V"><span class="lbl-c">V</span></button>
           <button type="button" class="keycap" data-key="B"><span class="lbl-c">B</span></button>
           <button type="button" class="keycap" data-key="N"><span class="lbl-c">N</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">?</span><span class="lbl-c">,</span></button>
-          <button type="button" class="keycap mobile-only" style="flex: 1.5;" data-key="E2"><span class="lbl-tl">E</span><span class="lbl-c">µ</span><span class="lbl-br">`</span></button>
+          <button type="button" class="keycap mobile-only" style="flex: 1.65;" data-key="E2"><span class="lbl-tl">E</span><span class="lbl-c">µ</span><span class="lbl-br">`</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">?</span><span class="lbl-c">,</span></button>
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">.</span><span class="lbl-c">;</span></button>
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">/</span><span class="lbl-c">:</span></button>
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">+</span><span class="lbl-c">=</span><span class="lbl-br">~</span></button>
@@ -739,7 +850,7 @@
       <!-- Right Numpad Block -->
       <div class="kb-numpad">
         <div class="kb-row">
-          <button type="button" class="keycap pill" data-toggle-kb="true"><span class="lbl-sm">mobile</span></button>
+          <button type="button" class="keycap pill"></button>
           <button type="button" class="keycap pill"></button>
           <button type="button" class="keycap pill"></button>
           <button type="button" class="keycap pill"></button>
@@ -807,6 +918,20 @@
       "Z":  { title: "Zen", sub: "Peace is just being right there with you, sayang.", files: ["zen.jpeg"] }
     };
 
+    function createImageWithFallback(filename, altText) {
+      const img = document.createElement("img");
+      img.alt = altText;
+      const encoded = encodeURIComponent(filename);
+      const paths = [encoded, `memories/${encoded}`, `public/memories/${encoded}`];
+      let tryIdx = 0;
+      img.onerror = () => {
+        tryIdx++;
+        if (tryIdx < paths.length) img.src = paths[tryIdx];
+      };
+      img.src = paths[0];
+      return img;
+    }
+
     function preloadAllImages() {
       const seen = new Set();
       Object.values(KEY_MEMORIES).forEach((entry) => {
@@ -819,12 +944,12 @@
     }
 
     // =========================================================================
-    // 2. INTRO ANIMATION & SMOOTH FLOWING ESCAPE A-TO-Z REEL
+    // 2. 3D INTRO ANIMATION & 3D COVERFLOW ESCAPE REEL
     // =========================================================================
     const INTRO_WORDS  = ["AULI@", "I", "LOVE", "YOU", "CUZ", "YOU", "ARE", "SPECIAL"];
-    const LETTER_DELAY = 360;
-    const WORD_HOLD    = 850;
-    const REEL_STEP_MS = 1050; // Smooth, flowing pace per card during ESC reel
+    const LETTER_DELAY = 340;
+    const WORD_HOLD    = 820;
+    const REEL_STEP_MS = 680; // Flowing 3D Coverflow pace
 
     let introTimers = [];
     let flashTimers = [];
@@ -835,24 +960,31 @@
 
     const chassis = document.getElementById("kbChassis");
     const lowerthirdBox = document.getElementById("lowerthirdBox");
-    const idleHint = document.getElementById("idleHint");
     const introBanner = document.getElementById("introWordBanner");
     const sliderTrack = document.getElementById("ltSliderTrack");
     const slideDots = document.getElementById("ltSlideDots");
-    const textGroup = document.getElementById("ltTextGroup");
     const keyPill = document.getElementById("ltKeyPill");
-    const reelProgress = document.getElementById("reelProgress");
+    const reelDeck = document.getElementById("reelDeck");
+
+    function triggerKeyShockwave(k) {
+      document.querySelectorAll(`.keycap[data-key="${k}"]`).forEach((btn) => {
+        btn.classList.remove("pulse-wave");
+        void btn.offsetWidth;
+        btn.classList.add("pulse-wave");
+      });
+    }
 
     function highlightMatchingKeys(k) {
       document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
       document.querySelectorAll(`.keycap[data-key="${k}"]`).forEach((el) => el.classList.add("active-key"));
+      triggerKeyShockwave(k);
     }
 
     function stopIntroAnimation() {
       introTimers.forEach(clearTimeout);
       introTimers = [];
       document.querySelectorAll(".keycap.intro-lit").forEach((el) => el.classList.remove("intro-lit"));
-      introBanner.classList.remove("active");
+      introBanner.classList.remove("active", "word-complete", "word-exit");
       introBanner.innerHTML = "";
     }
 
@@ -860,63 +992,78 @@
       flashTimers.forEach(clearTimeout);
       flashTimers = [];
       isReelPlaying = false;
-      reelProgress.classList.remove("active");
-      reelProgress.style.width = "0%";
+      reelDeck.classList.remove("active");
+      reelDeck.innerHTML = "";
     }
 
     function playIntroSequence() {
       stopAlphabetFlash();
       stopIntroAnimation();
-      clearSelection(false);
+      clearSelection();
 
-      idleHint.style.display = "none";
       introBanner.classList.add("active");
-
-      let elapsed = 250;
+      let elapsed = 220;
 
       INTRO_WORDS.forEach((word) => {
+        // Start of word
         const startWordTimer = setTimeout(() => {
           document.querySelectorAll(".keycap.intro-lit").forEach((el) => el.classList.remove("intro-lit"));
+          introBanner.classList.remove("word-complete", "word-exit");
           introBanner.innerHTML = "";
         }, elapsed);
         introTimers.push(startWordTimer);
 
+        // Type each letter with 3D tile flip + keyboard shockwave
         word.split("").forEach((ch) => {
           elapsed += LETTER_DELAY;
           const letterTimer = setTimeout(() => {
             document.querySelectorAll(`.keycap[data-key="${ch}"]`).forEach((btn) => {
               btn.classList.add("intro-lit");
             });
+            triggerKeyShockwave(ch);
 
             const span = document.createElement("span");
             span.className = "intro-letter";
-            span.textContent = ch;
+            span.textContent = ch === "@" ? "A" : ch;
             introBanner.appendChild(span);
           }, elapsed);
           introTimers.push(letterTimer);
         });
+
+        // Word completion shimmer pulse
+        const pulseTimer = setTimeout(() => {
+          introBanner.classList.add("word-complete");
+        }, elapsed + 160);
+        introTimers.push(pulseTimer);
+
+        // Sweep out before next word
+        const exitTimer = setTimeout(() => {
+          introBanner.classList.remove("word-complete");
+          introBanner.classList.add("word-exit");
+        }, elapsed + WORD_HOLD - 220);
+        introTimers.push(exitTimer);
 
         elapsed += WORD_HOLD;
       });
 
       const endTimer = setTimeout(() => {
         stopIntroAnimation();
-        if (!currentKey) idleHint.style.display = "block";
-      }, elapsed + 300);
+      }, elapsed + 150);
       introTimers.push(endTimer);
     }
 
-    // Smooth, Continuous A-to-Z Flowing Reel
+    // 3D Coverflow Card Stream for ESC
     function playAlphabetFlash() {
       if (isReelPlaying) {
         stopAlphabetFlash();
-        clearSelection(true);
+        clearSelection();
         return;
       }
 
       stopIntroAnimation();
       stopAlphabetFlash();
       clearInterval(autoSwipeTimer);
+      lowerthirdBox.classList.remove("visible");
       isReelPlaying = true;
 
       const alphabetKeys = Object.keys(KEY_MEMORIES)
@@ -926,84 +1073,70 @@
       const steps = [];
       alphabetKeys.forEach((k) => {
         const entry = KEY_MEMORIES[k];
-        entry.files.forEach((file, fileIdx) => {
-          steps.push({ k, entry, file, fileIdx, totalForKey: entry.files.length });
+        entry.files.forEach((file) => {
+          steps.push({ k, entry, file });
         });
       });
 
-      // Build one continuous horizontal filmstrip of all A-Z photos so it glides without DOM cuts
-      idleHint.style.display = "none";
-      lowerthirdBox.classList.add("visible");
-      slideDots.classList.remove("show");
-      sliderTrack.style.transition = "none";
-      sliderTrack.innerHTML = "";
-      sliderTrack.style.transform = "translateX(0%)";
+      // Build 3D cards in the Coverflow deck
+      reelDeck.innerHTML = "";
+      reelDeck.classList.add("active");
 
-      steps.forEach((step, idx) => {
-        const slide = document.createElement("div");
-        slide.className = "lt-slide" + (idx === 0 ? " active-slide" : "");
-        slide.appendChild(createImageWithFallback(step.file, step.entry.title));
-        sliderTrack.appendChild(slide);
+      const cardEls = steps.map((step, idx) => {
+        const card = document.createElement("div");
+        card.className = "reel-card";
+        card.dataset.pos = idx === 0 ? "0" : idx === 1 ? "1" : idx === 2 ? "2" : "far-right";
+
+        const photoWrap = document.createElement("div");
+        photoWrap.className = "lt-photo-wrap";
+        photoWrap.appendChild(createImageWithFallback(step.file, step.entry.title));
+
+        const info = document.createElement("div");
+        info.className = "lt-info";
+        info.innerHTML = `
+          <div class="lt-top-row">
+            <span class="lt-key-pill">${step.k}</span>
+          </div>
+          <div class="lt-text-group">
+            <div class="lt-title">${step.entry.title}</div>
+            <div class="lt-sub">${step.entry.sub}</div>
+          </div>
+        `;
+
+        card.appendChild(photoWrap);
+        card.appendChild(info);
+        reelDeck.appendChild(card);
+        return card;
       });
 
-      void sliderTrack.offsetWidth;
-      sliderTrack.style.transition = "transform 0.68s cubic-bezier(0.22, 1, 0.36, 1)";
-
-      reelProgress.classList.add("active");
-      reelProgress.style.width = "0%";
-
-      let prevKey = null;
-
-      steps.forEach((step, idx) => {
+      // Cascade through every card in 3D space
+      steps.forEach((step, activeIdx) => {
         const timer = setTimeout(() => {
-          // 1. Glide keyboard highlight to current letter
           chassis.classList.add("dim-mode");
           highlightMatchingKeys(step.k);
 
-          // 2. Smoothly glide photo filmstrip to current slide
-          sliderTrack.style.transform = `translateX(-${idx * 100}%)`;
-          const allSlides = sliderTrack.querySelectorAll(".lt-slide");
-          allSlides.forEach((s, sIdx) => s.classList.toggle("active-slide", sIdx === idx));
-
-          // 3. Update progress bar
-          reelProgress.style.width = `${((idx + 1) / steps.length) * 100}%`;
-
-          // 4. Smoothly crossfade/slide text whenever the letter changes
-          if (step.k !== prevKey) {
-            currentKey = step.k;
-            prevKey = step.k;
-
-            keyPill.classList.add("pop");
-            setTimeout(() => keyPill.classList.remove("pop"), 240);
-
-            if (idx === 0) {
-              keyPill.textContent = step.k;
-              document.getElementById("ltTitle").textContent = step.entry.title;
-              document.getElementById("ltSub").textContent = step.entry.sub;
-            } else {
-              textGroup.classList.add("fade-out");
-              setTimeout(() => {
-                keyPill.textContent = step.k;
-                document.getElementById("ltTitle").textContent = step.entry.title;
-                document.getElementById("ltSub").textContent = step.entry.sub;
-                textGroup.classList.remove("fade-out");
-              }, 170);
-            }
-          }
-        }, idx * REEL_STEP_MS);
+          cardEls.forEach((card, cIdx) => {
+            const diff = cIdx - activeIdx;
+            if (diff === 0) card.dataset.pos = "0";
+            else if (diff === 1) card.dataset.pos = "1";
+            else if (diff === 2) card.dataset.pos = "2";
+            else if (diff === -1) card.dataset.pos = "-1";
+            else if (diff === -2) card.dataset.pos = "-2";
+            else if (diff > 2) card.dataset.pos = "far-right";
+            else card.dataset.pos = "far-left";
+          });
+        }, activeIdx * REEL_STEP_MS);
 
         flashTimers.push(timer);
       });
 
-      // Reset cleanly after the final 'Z' card finishes
+      // Settle on the final 'Z' card when the 3D cascade finishes
       const finishTimer = setTimeout(() => {
-        isReelPlaying = false;
-        reelProgress.classList.remove("active");
-      }, steps.length * REEL_STEP_MS + 600);
+        stopAlphabetFlash();
+        selectKey("Z");
+      }, steps.length * REEL_STEP_MS + 400);
       flashTimers.push(finishTimer);
     }
-
-    document.getElementById("replayIntroBtn").addEventListener("click", playIntroSequence);
 
     document.querySelectorAll("[data-esc]").forEach((btn) => {
       btn.addEventListener("click", (e) => {
@@ -1012,22 +1145,8 @@
       });
     });
 
-    document.querySelectorAll("[data-replay]").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        playIntroSequence();
-      });
-    });
-
-    document.querySelectorAll("[data-toggle-kb]").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        chassis.classList.toggle("mobile-touch");
-      });
-    });
-
     // =========================================================================
-    // 3. AUTO-SWIPE CAROUSEL & KEY SELECTION LOGIC
+    // 3. SINGLE KEY SELECTION & AUTO-SWIPE CAROUSEL
     // =========================================================================
     document.querySelectorAll(".keycap[data-key]").forEach((btn) => {
       const k = btn.dataset.key;
@@ -1048,27 +1167,13 @@
     document.querySelectorAll("[data-clear]").forEach((btn) => {
       btn.addEventListener("click", () => {
         stopAlphabetFlash();
-        clearSelection(true);
+        clearSelection();
       });
     });
 
     document.querySelectorAll("[data-cycle]").forEach((btn) => {
       btn.addEventListener("click", () => stepSlide(parseInt(btn.dataset.cycle, 10)));
     });
-
-    function createImageWithFallback(filename, altText) {
-      const img = document.createElement("img");
-      img.alt = altText;
-      const encoded = encodeURIComponent(filename);
-      const paths = [encoded, `memories/${encoded}`, `public/memories/${encoded}`];
-      let tryIdx = 0;
-      img.onerror = () => {
-        tryIdx++;
-        if (tryIdx < paths.length) img.src = paths[tryIdx];
-      };
-      img.src = paths[0];
-      return img;
-    }
 
     function selectKey(k) {
       const entry = KEY_MEMORIES[k];
@@ -1095,22 +1200,24 @@
     function renderLowerThird(k, entry, enableAutoSwipe = true) {
       clearInterval(autoSwipeTimer);
 
-      idleHint.style.display = "none";
-      lowerthirdBox.classList.add("visible");
+      // Re-trigger 3D spring entrance and glass shine sweep
+      lowerthirdBox.classList.remove("visible", "shine");
+      void lowerthirdBox.offsetWidth;
+      lowerthirdBox.classList.add("visible", "shine");
 
       sliderTrack.style.transition = "none";
       sliderTrack.innerHTML = "";
       sliderTrack.style.transform = "translateX(0%)";
 
-      entry.files.forEach((file, idx) => {
+      entry.files.forEach((file) => {
         const slide = document.createElement("div");
-        slide.className = "lt-slide" + (idx === 0 ? " active-slide" : "");
+        slide.className = "lt-slide";
         slide.appendChild(createImageWithFallback(file, entry.title));
         sliderTrack.appendChild(slide);
       });
 
       void sliderTrack.offsetWidth;
-      sliderTrack.style.transition = "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)";
+      sliderTrack.style.transition = "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)";
 
       slideDots.innerHTML = "";
       if (entry.files.length > 1) {
@@ -1130,7 +1237,6 @@
         slideDots.classList.remove("show");
       }
 
-      textGroup.classList.remove("fade-out");
       keyPill.textContent = k === "@" ? "2 é @" : (k === "E2" ? "E µ" : k);
       document.getElementById("ltTitle").textContent = entry.title;
       document.getElementById("ltSub").textContent = entry.sub;
@@ -1144,9 +1250,6 @@
       currentSlideIdx = (currentSlideIdx + dir + files.length) % files.length;
       sliderTrack.style.transform = `translateX(-${currentSlideIdx * 100}%)`;
 
-      const allSlides = sliderTrack.querySelectorAll(".lt-slide");
-      allSlides.forEach((s, idx) => s.classList.toggle("active-slide", idx === currentSlideIdx));
-
       const dots = slideDots.querySelectorAll("span");
       dots.forEach((d, idx) => d.classList.toggle("active-dot", idx === currentSlideIdx));
 
@@ -1156,13 +1259,12 @@
       }
     }
 
-    function clearSelection(showHint = true) {
+    function clearSelection() {
       clearInterval(autoSwipeTimer);
       currentKey = null;
       chassis.classList.remove("dim-mode");
       document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
-      lowerthirdBox.classList.remove("visible");
-      if (showHint) idleHint.style.display = "block";
+      lowerthirdBox.classList.remove("visible", "shine");
     }
 
     lowerthirdBox.addEventListener("click", () => stepSlide(1, true));
@@ -1209,7 +1311,7 @@
       if (
         e.target.closest("#kbChassis") ||
         e.target.closest("#lowerthirdBox") ||
-        e.target.closest(".utility-bar")
+        e.target.closest("#reelDeck")
       ) {
         return;
       }

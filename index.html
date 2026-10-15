@@ -6,10 +6,10 @@
   <title>Alphabet Dating — Memory Keyboard</title>
   <style>
     :root {
-      --bg: #050505;
-      --kb-bg: #000000;
-      --kb-frame: #e6e6e6;
-      --key-outer: #8c8c8c;
+      --bg: #070709;
+      --kb-bg: #030304;
+      --kb-frame: #ffffff;
+      --key-outer: #d4d4d8;
       --key-inner: #ffffff;
     }
 
@@ -23,14 +23,14 @@
 
     body {
       min-height: 100vh;
-      background: var(--bg);
+      background: radial-gradient(circle at 50% 15%, #16161d 0%, var(--bg) 75%);
       color: #ffffff;
       font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 12px 20px;
+      padding: 14px 12px 22px;
       overflow-x: hidden;
     }
 
@@ -40,22 +40,16 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 4px;
-      flex-wrap: wrap;
     }
 
     .util-btn {
-      background: #111;
-      border: 1px solid #333;
-      color: #d4d4d4;
+      background: #141418;
+      border: 1px solid #52525b;
+      color: #f4f4f5;
       padding: 5px 12px;
       border-radius: 999px;
       font-size: 0.72rem;
       cursor: pointer;
-    }
-
-    .util-btn:hover {
-      border-color: #fff;
-      color: #fff;
     }
 
     #mobileModeBtn {
@@ -63,7 +57,7 @@
     }
 
     /* =====================================================================
-       COMPACT LOWER-THIRD STAGE (Small Box Above Keyboard — No 'X' Cross)
+       COMPACT LOWER-THIRD STAGE (Single Title + Auto-Swiping Image Slider)
        ===================================================================== */
     .stage-area {
       width: 100%;
@@ -78,24 +72,24 @@
     }
 
     .idle-hint {
-      color: #737373;
+      color: #a1a1aa;
       font-size: 0.85rem;
       letter-spacing: 0.04em;
       text-align: center;
-      padding: 12px 18px;
-      border: 1px dashed #262626;
+      padding: 12px 20px;
+      border: 1px dashed #3f3f46;
       border-radius: 999px;
     }
 
     .lowerthird-box {
       display: none;
       align-items: stretch;
-      background: #0a0a0a;
-      border: 1.5px solid rgba(255, 255, 255, 0.88);
-      border-radius: 16px;
+      background: #0b0b0e;
+      border: 2px solid #ffffff;
+      border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 22px rgba(255, 255, 255, 0.14);
-      max-width: 480px;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9), 0 0 28px rgba(255, 255, 255, 0.22);
+      max-width: 490px;
       width: 100%;
       height: 210px;
       cursor: pointer;
@@ -111,30 +105,77 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    /* Auto-Swipe Carousel Viewport */
     .lt-photo-wrap {
       position: relative;
-      width: 165px;
+      width: 170px;
       height: 100%;
-      background: #090909;
+      background: #050505;
       flex-shrink: 0;
       overflow: hidden;
-      border-right: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-right: 1.5px solid rgba(255, 255, 255, 0.35);
     }
 
-    #memoryImg {
+    .lt-slider-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .lt-slide {
+      min-width: 100%;
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+    }
+
+    .lt-slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
 
+    /* Small Dots on Photo When Auto-Swiping 2 Images */
+    .lt-slide-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      gap: 5px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .lt-slide-dots.show {
+      display: flex;
+    }
+
+    .lt-slide-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+
+    .lt-slide-dots span.active-dot {
+      background: #ffffff;
+      transform: scale(1.2);
+    }
+
+    /* Lower-Third Text Side (Clean Single Title + Description) */
     .lt-info {
       flex: 1;
-      padding: 14px 16px;
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: linear-gradient(135deg, #111111 0%, #050505 100%);
+      background: linear-gradient(135deg, #141418 0%, #070709 100%);
       min-width: 0;
     }
 
@@ -149,59 +190,38 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 32px;
-      height: 32px;
-      padding: 0 9px;
-      border-radius: 8px;
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 9px;
       background: #ffffff;
       color: #000000;
       font-weight: 800;
-      font-size: 0.9rem;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
-    }
-
-    .lt-counter {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #000;
-      background: #e5e5e5;
-      padding: 3px 9px;
-      border-radius: 999px;
-      display: none;
-    }
-
-    .lt-counter.show {
-      display: inline-block;
+      font-size: 0.92rem;
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.65);
     }
 
     .lt-text-group {
       margin-top: auto;
     }
 
-    .lt-label-tag {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: #9ca3af;
-      margin-bottom: 3px;
-    }
-
     .lt-title {
-      font-size: 1.05rem;
-      font-weight: 700;
+      font-size: 1.12rem;
+      font-weight: 800;
       color: #ffffff;
-      line-height: 1.25;
-      word-break: break-word;
+      line-height: 1.2;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
     }
 
     .lt-sub {
-      font-size: 0.75rem;
-      color: #a3a3a3;
-      margin-top: 4px;
+      font-size: 0.82rem;
+      color: #d4d4d8;
+      line-height: 1.42;
     }
 
     /* =====================================================================
-       RESPONSIVE BLACK & WHITE AZERTY KEYBOARD
+       BRIGHTER BLACK & WHITE AZERTY KEYBOARD
        ===================================================================== */
     .kb-outer {
       width: 100%;
@@ -213,12 +233,14 @@
     .keyboard-chassis {
       width: 100%;
       background: var(--kb-bg);
-      border: 2.5px solid var(--kb-frame);
+      border: 3px solid var(--kb-frame);
       border-radius: clamp(14px, 2.2vw, 28px);
       padding: clamp(8px, 1.6vw, 20px);
       display: flex;
       gap: clamp(6px, 1.4vw, 18px);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
+      box-shadow:
+        0 0 30px rgba(255, 255, 255, 0.12),
+        0 20px 60px rgba(0, 0, 0, 0.95);
     }
 
     .kb-main {
@@ -248,16 +270,17 @@
       position: relative;
       flex: 1;
       aspect-ratio: 1 / 1;
-      background: #000000;
-      border: 1.5px solid var(--key-outer);
+      background: #0a0a0d;
+      border: 1.6px solid var(--key-outer);
       border-radius: clamp(5px, 0.9vw, 11px);
       color: #ffffff;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(0.55rem, 1.1vw, 0.95rem);
-      font-weight: 500;
+      font-size: clamp(0.58rem, 1.12vw, 0.98rem);
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(255, 255, 255, 0.06);
       transition: opacity 0.2s ease, filter 0.2s ease, transform 0.12s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       min-width: 0;
       padding: 0;
@@ -267,9 +290,14 @@
       content: "";
       position: absolute;
       inset: clamp(1px, 0.2vw, 2.5px);
-      border: 1.2px solid var(--key-inner);
+      border: 1.5px solid var(--key-inner);
       border-radius: clamp(3px, 0.7vw, 8px);
       pointer-events: none;
+    }
+
+    .keycap:hover {
+      background: #18181f;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
     }
 
     .keycap.pill {
@@ -291,26 +319,27 @@
     .keycap.w-fill  { flex: 1.5;  aspect-ratio: auto; }
 
     /* =====================================================================
-       LIGHT UP PRESSED KEY & DIM ALL OTHER KEYS
+       SUBTLE DIMMING + STRONG NEON GLOW ON PRESSED KEY
        ===================================================================== */
     .keyboard-chassis.dim-mode .keycap:not(.active-key) {
-      opacity: 0.24;
-      filter: brightness(0.6);
+      opacity: 0.62;
     }
 
     .keycap.active-key {
       opacity: 1 !important;
-      filter: none !important;
-      background: rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.34);
       border-color: #ffffff;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.95), inset 0 0 12px rgba(255, 255, 255, 0.65);
+      box-shadow:
+        0 0 24px #ffffff,
+        0 0 10px rgba(255, 255, 255, 0.9),
+        inset 0 0 14px rgba(255, 255, 255, 0.85);
       transform: translateY(1px);
       z-index: 2;
     }
 
     .keycap.active-key::after {
       border-color: #ffffff;
-      box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.8);
+      box-shadow: inset 0 0 10px #ffffff;
     }
 
     .multi-dots {
@@ -319,21 +348,21 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 2px;
+      gap: 2.5px;
     }
 
     .multi-dots span {
       width: 3.5px;
       height: 3.5px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.75);
+      background: #ffffff;
     }
 
     .lbl-tl { position: absolute; top: 12%; left: 14%; font-size: 0.68em; line-height: 1; }
     .lbl-tr { position: absolute; top: 12%; right: 14%; font-size: 0.68em; line-height: 1; }
     .lbl-bl { position: absolute; bottom: 12%; left: 14%; font-size: 0.68em; line-height: 1; }
     .lbl-br { position: absolute; bottom: 12%; right: 14%; font-size: 0.68em; line-height: 1; }
-    .lbl-c  { font-size: 1em; font-weight: 500; }
+    .lbl-c  { font-size: 1em; font-weight: 600; }
     .lbl-sm { font-size: 0.72em; }
 
     .numpad-grid {
@@ -374,16 +403,20 @@
       }
 
       .lowerthird-box {
-        height: 168px;
+        height: 172px;
         max-width: 96vw;
       }
 
       .lt-photo-wrap {
-        width: 130px;
+        width: 132px;
       }
 
       .lt-title {
-        font-size: 0.95rem;
+        font-size: 1rem;
+      }
+
+      .lt-sub {
+        font-size: 0.76rem;
       }
 
       .keyboard-chassis.mobile-touch .kb-numpad,
@@ -394,7 +427,7 @@
       .keyboard-chassis.mobile-touch .keycap {
         aspect-ratio: auto;
         height: 44px;
-        font-size: 0.9rem;
+        font-size: 0.92rem;
       }
     }
   </style>
@@ -408,28 +441,27 @@
   <!-- Compact Lower-Third Display Box -->
   <div class="stage-area">
     <div class="idle-hint" id="idleHint">
-      Press or tap any key to light it up &amp; view its lower-third memory
+      Press or tap any key to light it up &amp; open our memory
     </div>
 
-    <div class="lowerthird-box" id="lowerthirdBox" title="Tap or press the same key again to switch photos">
-      <div class="lt-photo-wrap" id="ltPhotoWrap">
-        <img id="memoryImg" alt="Memory" />
+    <div class="lowerthird-box" id="lowerthirdBox">
+      <div class="lt-photo-wrap">
+        <div class="lt-slider-track" id="ltSliderTrack"></div>
+        <div class="lt-slide-dots" id="ltSlideDots"></div>
       </div>
       <div class="lt-info">
         <div class="lt-top-row">
           <span class="lt-key-pill" id="ltKeyPill">A</span>
-          <span class="lt-counter" id="ltCounter">1 / 2 ↻</span>
         </div>
         <div class="lt-text-group">
-          <div class="lt-label-tag" id="ltFileTag">MEMORY</div>
-          <div class="lt-title" id="ltTitle">Anniversary Celebrating</div>
-          <div class="lt-sub" id="ltSub">Tap box or press key again</div>
+          <div class="lt-title" id="ltTitle">Anniversary</div>
+          <div class="lt-sub" id="ltSub">Celebrating us and every milestone with my sayang.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Responsive Black & White Belgian AZERTY Keyboard -->
+  <!-- Brighter Black & White Belgian AZERTY Keyboard -->
   <div class="kb-outer">
     <div class="keyboard-chassis mobile-touch" id="kbChassis">
 
@@ -526,7 +558,7 @@
           <button type="button" class="keycap w-ctrl"><span class="lbl-sm">ctrl</span></button>
           <button type="button" class="keycap w-ctrl"><span class="lbl-sm">fn</span></button>
           <button type="button" class="keycap w-ctrl" aria-label="Win">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="#dcdcdc">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="#ffffff">
               <polygon points="0,2.2 6.8,1.2 6.8,7.6 0,7.6"/><polygon points="7.6,1.1 16,0 16,7.6 7.6,7.6"/>
               <polygon points="0,8.4 6.8,8.4 6.8,14.8 0,13.8"/><polygon points="7.6,8.4 16,8.4 16,16 7.6,14.9"/>
             </svg>
@@ -582,81 +614,79 @@
 
   <script>
     // =========================================================================
-    // 1. STATE & DOM REFERENCES (Declared first so script never halts)
+    // 1. MEMORIES DATA (With your personal descriptions & multi-image support)
     // =========================================================================
-    let currentKey = null;
-    const photoIndices = {};
-
-    const chassis = document.getElementById("kbChassis");
-    const lowerthirdBox = document.getElementById("lowerthirdBox");
-    const idleHint = document.getElementById("idleHint");
-    const memoryImg = document.getElementById("memoryImg");
-
-    // Default mapping (also overridden by memories.json when hosted on GitHub)
     let KEY_MEMORIES = {
-      "A":  [{ file: "anniversary celebrating.jpeg", title: "Anniversary Celebrating", sub: "Celebrating our special day" }],
-      "@":  [{ file: "anniversary celebrating.jpeg", title: "Anniversary Celebrating (@)", sub: "Second A • Special memory" }],
-      "B":  [{ file: "birthdaycelebration.jpeg", title: "Birthday Celebration", sub: "Making a birthday wish" }],
-      "C":  [{ file: "cycling.jpeg", title: "Cycling", sub: "Out on a bike ride together" }],
-      "D":  [{ file: "disneydate.jpeg", title: "Disney Date", sub: "Cozy Disney date" }],
-      "E":  [
-        { file: "eating1.jpeg", title: "Eating Together #1", sub: "Press E again for photo 2" },
-        { file: "eating2.jpeg", title: "Eating Together #2", sub: "Press E again for photo 1" }
-      ],
-      "E2": [{ file: "explore.jpeg", title: "Explore", sub: "Exploring new places together" }],
-      "F":  [{ file: "food festival.jpeg", title: "Food Festival", sub: "Tasting treats at the festival" }],
-      "G":  [{ file: "game.jpeg", title: "Game Time", sub: "Playful moments together" }],
-      "H":  [{ file: "hike.jpeg", title: "Hike", sub: "Out on the trail" }],
-      "I":  [{ file: "iceskating.jpeg", title: "Ice Skating", sub: "Gliding on the ice rink" }],
-      "J":  [{ file: "jeepride.jpeg", title: "Jeep Ride", sub: "Mountain jeep adventure" }],
-      "K":  [{ file: "kart.jpeg", title: "Kart Racing", sub: "Racing on the track" }],
-      "L":  [
-        { file: "lightshow.jpeg", title: "Light Show #1", sub: "Press L again for photo 2" },
-        { file: "lightshow2.jpeg", title: "Light Show #2", sub: "Press L again for photo 1" }
-      ],
-      "M":  [{ file: "moviedate.jpeg", title: "Movie Date", sub: "Cinema night together" }],
-      "N":  [{ file: "newyearcelebrations.jpeg", title: "New Year Celebrations", sub: "Ringing in the New Year" }],
-      "O":  [{ file: "oceanview.jpeg", title: "Ocean View", sub: "By the tropical sea" }],
-      "P":  [
-        { file: "photobooth.jpeg", title: "Photobooth #1", sub: "Press P again for photo 2" },
-        { file: "photobooth2.jpeg", title: "Photobooth #2", sub: "Press P again for photo 1" }
-      ],
-      "Q":  [
-        { file: "qualitytime.jpeg", title: "Quality Time #1", sub: "Press Q again for photo 2" },
-        { file: "qualitytime2.jpeg", title: "Quality Time #2", sub: "Press Q again for photo 1" }
-      ],
-      "R":  [{ file: "read.jpeg", title: "Reading Together", sub: "Bookstore date" }],
-      "S":  [
-        { file: "singapore.jpeg", title: "Singapore #1", sub: "Press S again for photo 2" },
-        { file: "singapore2.jpeg", title: "Singapore #2", sub: "Press S again for photo 1" }
-      ],
-      "T":  [{ file: "templerun.jpeg", title: "Temple Run", sub: "Visiting historic temples" }],
-      "U":  [{ file: "universalstudios.jpeg", title: "Universal Studios", sub: "Theme park adventure" }],
-      "V":  [{ file: "volcano.jpeg", title: "Volcano View", sub: "Exploring the volcano together" }],
-      "W":  [{ file: "waterpark.jpeg", title: "Waterpark", sub: "Sunshine & water slides" }],
-      "X":  [{ file: "explore.jpeg", title: "Explore", sub: "Adventuring side by side" }],
-      "Y":  [{ file: "yapping.jpeg", title: "Yapping", sub: "Endless conversations" }],
-      "Z":  [{ file: "zen.jpeg", title: "Zen Waterfall", sub: "Peaceful waterfall vibes" }]
+      "A":  { title: "Anniversary", sub: "Celebrating us and every milestone with my sayang.", files: ["anniversary celebrating.jpeg"] },
+      "@":  { title: "Always & Forever", sub: "Celebrating us and every milestone with my sayang.", files: ["anniversary celebrating.jpeg"] },
+      "B":  { title: "Birthday Celebration", sub: "Candlelight, cake, and making a wish together.", files: ["birthdaycelebration.jpeg"] },
+      "C":  { title: "Cycling in Singapore", sub: "Riding through a beautiful park full of hidden treasures.", files: ["cycling.jpeg"] },
+      "D":  { title: "Disney Date", sub: "Cozying up, talking, and reading Disney stories together.", files: ["disneydate.jpeg"] },
+      "E":  { title: "Dinner Dates", sub: "Dinner dates are the best fr — since I'm not big on Indonesian food, we always make sure we eat good.", files: ["eating1.jpeg", "eating2.jpeg"] },
+      "E2": { title: "X-plore", sub: "Because each time we meet, we need to catch up and make new memories.", files: ["explore.jpeg"] },
+      "F":  { title: "Food Festival", sub: "The moment that finally made me fall in love with Indonesian food.", files: ["food festival.jpeg"] },
+      "G":  { title: "Game Time", sub: "Being passionate and trying out a game together for the first time.", files: ["game.jpeg"] },
+      "H":  { title: "Ocarina Beach Hike", sub: "Walking along the seaside together at Ocarina Beach Resort.", files: ["hike.jpeg"] },
+      "I":  { title: "Ice Skating", sub: "Cooling off on the ice together.", files: ["iceskating.jpeg"] },
+      "J":  { title: "Jeep Ride", sub: "Our first and coldest adventure together.", files: ["jeepride.jpeg"] },
+      "K":  { title: "Kart Racing", sub: "We beat every single child on the track.", files: ["kart.jpeg"] },
+      "L":  { title: "Light Show", sub: "A night full of glowing lights — as beautiful as you.", files: ["lightshow.jpeg", "lightshow2.jpeg"] },
+      "M":  { title: "Movie Night", sub: "Lean back, popcorn in hand, and just enjoyed.", files: ["moviedate.jpeg"] },
+      "N":  { title: "New Year's Eve", sub: "Ringing in the new year side by side.", files: ["newyearcelebrations.jpeg"] },
+      "O":  { title: "Island Hopping", sub: "Out on the water at the neighboring island of Batam.", files: ["oceanview.jpeg"] },
+      "P":  { title: "Photobooth", sub: "Capturing our favorite faces and memories in every strip.", files: ["photobooth.jpeg", "photobooth2.jpeg"] },
+      "Q":  { title: "Quality Time", sub: "No rush, no distractions — just us.", files: ["qualitytime.jpeg", "qualitytime2.jpeg"] },
+      "R":  { title: "Reading Together", sub: "Quiet bookstore moments side by side.", files: ["read.jpeg"] },
+      "S":  { title: "Singapore", sub: "Exploring the city and making heart hands by Marina Bay.", files: ["singapore.jpeg", "singapore2.jpeg"] },
+      "T":  { title: "Prambanan, Jogja", sub: "Temple run through the iconic Prambanan temples in Jogja.", files: ["templerun.jpeg"] },
+      "U":  { title: "Universal Studios", sub: "Pure, endless joy from start to finish.", files: ["universalstudios.jpeg"] },
+      "V":  { title: "Kawah Ijen", sub: "Standing together at the breathtaking Kawah Ijen crater.", files: ["volcano.jpeg"] },
+      "W":  { title: "Waterpark", sub: "It was fun, chaotic, and something totally different.", files: ["waterpark.jpeg"] },
+      "X":  { title: "X-plore", sub: "Because each time we meet, we need to catch up and make new memories.", files: ["explore.jpeg"] },
+      "Y":  { title: "Yapping", sub: "Endless talks, stories, and laughs together.", files: ["yapping.jpeg"] },
+      "Z":  { title: "Zen", sub: "Peace is just being right here with my sayang.", files: ["zen.jpeg"] }
     };
 
-    // Load external memories.json if present in the repo
+    // Load memories.json if present in the repo (supports both new and old format)
     fetch("memories.json")
       .then((res) => (res.ok ? res.json() : null))
       .then((json) => {
-        if (json) KEY_MEMORIES = json;
+        if (!json) return;
+        Object.keys(json).forEach((k) => {
+          if (Array.isArray(json[k])) {
+            KEY_MEMORIES[k] = {
+              title: json[k][0].title,
+              sub: KEY_MEMORIES[k] ? KEY_MEMORIES[k].sub : json[k][0].sub,
+              files: json[k].map((entry) => entry.file)
+            };
+          } else {
+            KEY_MEMORIES[k] = json[k];
+          }
+        });
       })
       .catch(() => {});
 
     // =========================================================================
-    // 2. KEY CLICK & KEYBOARD LISTENERS
+    // 2. AUTO-SWIPE CAROUSEL & KEY SELECTION LOGIC
     // =========================================================================
+    let currentKey = null;
+    let currentSlideIdx = 0;
+    let autoSwipeTimer = null;
+
+    const chassis = document.getElementById("kbChassis");
+    const lowerthirdBox = document.getElementById("lowerthirdBox");
+    const idleHint = document.getElementById("idleHint");
+    const sliderTrack = document.getElementById("ltSliderTrack");
+    const slideDots = document.getElementById("ltSlideDots");
+
+    // Add 2-dot indicators on keys with 2 images
     document.querySelectorAll(".keycap[data-key]").forEach((btn) => {
       const k = btn.dataset.key;
-      const list = KEY_MEMORIES[k];
-      if (list && list.length > 1) {
+      const entry = KEY_MEMORIES[k];
+      if (entry && entry.files && entry.files.length > 1) {
         const dots = document.createElement("div");
         dots.className = "multi-dots";
-        dots.innerHTML = "<span></span>".repeat(list.length);
+        dots.innerHTML = "<span></span>".repeat(entry.files.length);
         btn.appendChild(dots);
       }
       btn.addEventListener("click", (e) => {
@@ -670,82 +700,104 @@
     });
 
     document.querySelectorAll("[data-cycle]").forEach((btn) => {
-      btn.addEventListener("click", () => cyclePhoto(parseInt(btn.dataset.cycle, 10)));
+      btn.addEventListener("click", () => stepSlide(parseInt(btn.dataset.cycle, 10)));
     });
 
-    function selectKey(k) {
-      const list = KEY_MEMORIES[k];
-      if (!list) return;
+    function createImageWithFallback(filename, altText) {
+      const img = document.createElement("img");
+      img.alt = altText;
+      const encoded = encodeURIComponent(filename);
+      const paths = [encoded, `memories/${encoded}`, `public/memories/${encoded}`];
+      let tryIdx = 0;
+      img.onerror = () => {
+        tryIdx++;
+        if (tryIdx < paths.length) img.src = paths[tryIdx];
+      };
+      img.src = paths[0];
+      return img;
+    }
 
-      if (currentKey === k && list.length > 1) {
-        photoIndices[k] = ((photoIndices[k] || 0) + 1) % list.length;
-      } else if (photoIndices[k] === undefined) {
-        photoIndices[k] = 0;
+    function selectKey(k) {
+      const entry = KEY_MEMORIES[k];
+      if (!entry) return;
+
+      // If pressing the same multi-image key again, swipe immediately to next image
+      if (currentKey === k && entry.files.length > 1) {
+        stepSlide(1);
+        return;
       }
 
       currentKey = k;
+      currentSlideIdx = 0;
 
-      // Light up ONLY the pressed key and dim all other keys
+      // Light up pressed key and gently soften others
       chassis.classList.add("dim-mode");
       document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
       const activeBtn = document.querySelector(`.keycap[data-key="${k}"]`);
       if (activeBtn) activeBtn.classList.add("active-key");
 
-      renderLowerThird(k);
+      renderLowerThird(k, entry);
     }
 
-    function cyclePhoto(step) {
-      if (!currentKey || !KEY_MEMORIES[currentKey]) return;
-      const list = KEY_MEMORIES[currentKey];
-      if (list.length <= 1) return;
-      photoIndices[currentKey] = ((photoIndices[currentKey] || 0) + step + list.length) % list.length;
-      renderLowerThird(currentKey);
-    }
-
-    // Automatically checks root folder, memories/, and public/memories/
-    function loadPhotoWithFallback(filename) {
-      const encoded = encodeURIComponent(filename);
-      const paths = [
-        encoded,
-        `memories/${encoded}`,
-        `public/memories/${encoded}`
-      ];
-      let tryIdx = 0;
-      memoryImg.onerror = () => {
-        tryIdx++;
-        if (tryIdx < paths.length) {
-          memoryImg.src = paths[tryIdx];
-        }
-      };
-      memoryImg.src = paths[0];
-    }
-
-    function renderLowerThird(k) {
-      const list = KEY_MEMORIES[k];
-      const idx = photoIndices[k] || 0;
-      const item = list[idx];
-      if (!item) return;
+    function renderLowerThird(k, entry) {
+      clearInterval(autoSwipeTimer);
 
       idleHint.style.display = "none";
       lowerthirdBox.classList.add("visible");
 
-      loadPhotoWithFallback(item.file);
+      // Build slides inside the horizontal track
+      sliderTrack.innerHTML = "";
+      sliderTrack.style.transform = "translateX(0%)";
 
-      document.getElementById("ltKeyPill").textContent = k === "@" ? "2 é @" : (k === "E2" ? "E µ" : k);
-      document.getElementById("ltFileTag").textContent = item.file.replace(".jpeg", "").toUpperCase();
-      document.getElementById("ltTitle").textContent = item.title;
-      document.getElementById("ltSub").textContent = item.sub;
+      entry.files.forEach((file) => {
+        const slide = document.createElement("div");
+        slide.className = "lt-slide";
+        slide.appendChild(createImageWithFallback(file, entry.title));
+        sliderTrack.appendChild(slide);
+      });
 
-      const counter = document.getElementById("ltCounter");
-      if (list.length > 1) {
-        counter.classList.add("show");
-        counter.textContent = `${idx + 1} / ${list.length} ↻`;
+      // Build indicator dots & start auto-swiping if this key has 2+ images
+      slideDots.innerHTML = "";
+      if (entry.files.length > 1) {
+        slideDots.classList.add("show");
+        entry.files.forEach((_, idx) => {
+          const dot = document.createElement("span");
+          if (idx === 0) dot.classList.add("active-dot");
+          slideDots.appendChild(dot);
+        });
+
+        autoSwipeTimer = setInterval(() => {
+          stepSlide(1, false);
+        }, 2800);
       } else {
-        counter.classList.remove("show");
+        slideDots.classList.remove("show");
+      }
+
+      // Single clean title + personal description
+      document.getElementById("ltKeyPill").textContent = k === "@" ? "2 é @" : (k === "E2" ? "E µ" : k);
+      document.getElementById("ltTitle").textContent = entry.title;
+      document.getElementById("ltSub").textContent = entry.sub;
+    }
+
+    function stepSlide(dir, resetTimer = true) {
+      if (!currentKey || !KEY_MEMORIES[currentKey]) return;
+      const files = KEY_MEMORIES[currentKey].files;
+      if (!files || files.length <= 1) return;
+
+      currentSlideIdx = (currentSlideIdx + dir + files.length) % files.length;
+      sliderTrack.style.transform = `translateX(-${currentSlideIdx * 100}%)`;
+
+      const dots = slideDots.querySelectorAll("span");
+      dots.forEach((d, idx) => d.classList.toggle("active-dot", idx === currentSlideIdx));
+
+      if (resetTimer) {
+        clearInterval(autoSwipeTimer);
+        autoSwipeTimer = setInterval(() => stepSlide(1, false), 2800);
       }
     }
 
     function clearSelection() {
+      clearInterval(autoSwipeTimer);
       currentKey = null;
       chassis.classList.remove("dim-mode");
       document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
@@ -753,19 +805,15 @@
       idleHint.style.display = "block";
     }
 
-    lowerthirdBox.addEventListener("click", () => {
-      if (currentKey && KEY_MEMORIES[currentKey] && KEY_MEMORIES[currentKey].length > 1) {
-        cyclePhoto(1);
-      }
-    });
+    lowerthirdBox.addEventListener("click", () => stepSlide(1, true));
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         clearSelection();
       } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-        cyclePhoto(1);
+        stepSlide(1, true);
       } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-        cyclePhoto(-1);
+        stepSlide(-1, true);
       } else if (e.key === "@" || e.key === "2" || e.key === "é") {
         selectKey("@");
       } else if (e.key === "µ") {

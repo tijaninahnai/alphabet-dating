@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Alphabet Dating — Memory Keyboard</title>
+  <style>
+    :root {
+      --bg: #050505;
+      --kb-bg: #000000;
+      --kb-frame: #e6e6e6;
+      --key-outer: #8c8c8c;
+      --key-inner: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: #ffffff;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 12px 20px;
+      overflow-x: hidden;
+    }
+
+    .utility-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+
+    .util-btn {
+      background: #111;
+      border: 1px solid #333;
+      color: #d4d4d4;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+
+    .util-btn:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    #mobileModeBtn {
+      display: none;
+    }
+
+    /* =====================================================================
+       COMPACT LOWER-THIRD STAGE (Small Box Above Keyboard — No 'X' Cross)
+       ===================================================================== */
+    .stage-area {
+      width: 100%;
+      max-width: 1180px;
+      min-height: 225px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .idle-hint {
+      color: #737373;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      text-align: center;
+      padding: 12px 18px;
+      border: 1px dashed #262626;
+      border-radius: 999px;
+    }
+
+    .lowerthird-box {
+      display: none;
+      align-items: stretch;
+      background: #0a0a0a;
+      border: 1.5px solid rgba(255, 255, 255, 0.88);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 22px rgba(255, 255, 255, 0.14);
+      max-width: 480px;
+      width: 100%;
+      height: 210px;
+      cursor: pointer;
+      animation: ltSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .lowerthird-box.visible {
+      display: flex;
+    }
+
+    @keyframes ltSlideUp {
+      from { opacity: 0; transform: translateY(10px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .lt-photo-wrap {
+      position: relative;
+      width: 165px;
+      height: 100%;
+      background: #090909;
+      flex-shrink: 0;
+      overflow: hidden;
+      border-right: 1.5px solid rgba(255, 255, 255, 0.25);
+    }
+
+    #memoryImg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .lt-info {
+      flex: 1;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #111111 0%, #050505 100%);
+      min-width: 0;
+    }
+
+    .lt-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .lt-key-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 32px;
+      padding: 0 9px;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #000000;
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+    }
+
+    .lt-counter {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #000;
+      background: #e5e5e5;
+      padding: 3px 9px;
+      border-radius: 999px;
+      display: none;
+    }
+
+    .lt-counter.show {
+      display: inline-block;
+    }
+
+    .lt-text-group {
+      margin-top: auto;
+    }
+
+    .lt-label-tag {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #9ca3af;
+      margin-bottom: 3px;
+    }
+
+    .lt-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .lt-sub {
+      font-size: 0.75rem;
+      color: #a3a3a3;
+      margin-top: 4px;
+    }
+
+    /* =====================================================================
+       RESPONSIVE BLACK & WHITE AZERTY KEYBOARD
+       ===================================================================== */
+    .kb-outer {
+      width: 100%;
+      max-width: 1220px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .keyboard-chassis {
+      width: 100%;
+      background: var(--kb-bg);
+      border: 2.5px solid var(--kb-frame);
+      border-radius: clamp(14px, 2.2vw, 28px);
+      padding: clamp(8px, 1.6vw, 20px);
+      display: flex;
+      gap: clamp(6px, 1.4vw, 18px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
+    }
+
+    .kb-main {
+      flex: 14.5;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(3px, 0.55vw, 7px);
+      min-width: 0;
+    }
+
+    .kb-numpad {
+      flex: 4;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(3px, 0.55vw, 7px);
+      min-width: 0;
+    }
+
+    .kb-row {
+      display: flex;
+      gap: clamp(3px, 0.55vw, 7px);
+      width: 100%;
+      align-items: stretch;
+    }
+
+    .keycap {
+      position: relative;
+      flex: 1;
+      aspect-ratio: 1 / 1;
+      background: #000000;
+      border: 1.5px solid var(--key-outer);
+      border-radius: clamp(5px, 0.9vw, 11px);
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.55rem, 1.1vw, 0.95rem);
+      font-weight: 500;
+      transition: opacity 0.2s ease, filter 0.2s ease, transform 0.12s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      min-width: 0;
+      padding: 0;
+    }
+
+    .keycap::after {
+      content: "";
+      position: absolute;
+      inset: clamp(1px, 0.2vw, 2.5px);
+      border: 1.2px solid var(--key-inner);
+      border-radius: clamp(3px, 0.7vw, 8px);
+      pointer-events: none;
+    }
+
+    .keycap.pill {
+      aspect-ratio: 2.1 / 1;
+      border-radius: 999px;
+      font-size: clamp(0.42rem, 0.75vw, 0.68rem);
+    }
+
+    .keycap.pill::after {
+      border-radius: 999px;
+    }
+
+    .keycap.w-half  { flex: 0.58; aspect-ratio: auto; }
+    .keycap.w-tab   { flex: 1.48; aspect-ratio: auto; }
+    .keycap.w-caps  { flex: 1.82; aspect-ratio: auto; }
+    .keycap.w-shift { flex: 2.25; aspect-ratio: auto; }
+    .keycap.w-ctrl  { flex: 0.9;  aspect-ratio: auto; }
+    .keycap.w-space { flex: 5.2;  aspect-ratio: auto; }
+    .keycap.w-fill  { flex: 1.5;  aspect-ratio: auto; }
+
+    /* =====================================================================
+       LIGHT UP PRESSED KEY & DIM ALL OTHER KEYS
+       ===================================================================== */
+    .keyboard-chassis.dim-mode .keycap:not(.active-key) {
+      opacity: 0.24;
+      filter: brightness(0.6);
+    }
+
+    .keycap.active-key {
+      opacity: 1 !important;
+      filter: none !important;
+      background: rgba(255, 255, 255, 0.28);
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.95), inset 0 0 12px rgba(255, 255, 255, 0.65);
+      transform: translateY(1px);
+      z-index: 2;
+    }
+
+    .keycap.active-key::after {
+      border-color: #ffffff;
+      box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    .multi-dots {
+      position: absolute;
+      bottom: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 2px;
+    }
+
+    .multi-dots span {
+      width: 3.5px;
+      height: 3.5px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .lbl-tl { position: absolute; top: 12%; left: 14%; font-size: 0.68em; line-height: 1; }
+    .lbl-tr { position: absolute; top: 12%; right: 14%; font-size: 0.68em; line-height: 1; }
+    .lbl-bl { position: absolute; bottom: 12%; left: 14%; font-size: 0.68em; line-height: 1; }
+    .lbl-br { position: absolute; bottom: 12%; right: 14%; font-size: 0.68em; line-height: 1; }
+    .lbl-c  { font-size: 1em; font-weight: 500; }
+    .lbl-sm { font-size: 0.72em; }
+
+    .numpad-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: clamp(3px, 0.55vw, 7px);
+    }
+
+    .numpad-grid .keycap {
+      aspect-ratio: auto;
+      width: 100%;
+      height: 100%;
+    }
+
+    .split-arrows {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .split-arrows .keycap {
+      aspect-ratio: auto;
+      flex: 1;
+      border-radius: 4px;
+      font-size: 0.65em;
+    }
+
+    @media (max-width: 768px) {
+      #mobileModeBtn {
+        display: inline-block;
+      }
+
+      .stage-area {
+        min-height: 180px;
+      }
+
+      .lowerthird-box {
+        height: 168px;
+        max-width: 96vw;
+      }
+
+      .lt-photo-wrap {
+        width: 130px;
+      }
+
+      .lt-title {
+        font-size: 0.95rem;
+      }
+
+      .keyboard-chassis.mobile-touch .kb-numpad,
+      .keyboard-chassis.mobile-touch .hide-mobile {
+        display: none !important;
+      }
+
+      .keyboard-chassis.mobile-touch .keycap {
+        aspect-ratio: auto;
+        height: 44px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="utility-bar">
+    <button class="util-btn" id="mobileModeBtn">📱 Switch to Full Miniature Keyboard</button>
+  </div>
+
+  <!-- Compact Lower-Third Display Box -->
+  <div class="stage-area">
+    <div class="idle-hint" id="idleHint">
+      Press or tap any key to light it up &amp; view its lower-third memory
+    </div>
+
+    <div class="lowerthird-box" id="lowerthirdBox" title="Tap or press the same key again to switch photos">
+      <div class="lt-photo-wrap" id="ltPhotoWrap">
+        <img id="memoryImg" alt="Memory" />
+      </div>
+      <div class="lt-info">
+        <div class="lt-top-row">
+          <span class="lt-key-pill" id="ltKeyPill">A</span>
+          <span class="lt-counter" id="ltCounter">1 / 2 ↻</span>
+        </div>
+        <div class="lt-text-group">
+          <div class="lt-label-tag" id="ltFileTag">MEMORY</div>
+          <div class="lt-title" id="ltTitle">Anniversary Celebrating</div>
+          <div class="lt-sub" id="ltSub">Tap box or press key again</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Responsive Black & White Belgian AZERTY Keyboard -->
+  <div class="kb-outer">
+    <div class="keyboard-chassis mobile-touch" id="kbChassis">
+
+      <div class="kb-main">
+        <!-- Row 1: Function Pill Keys -->
+        <div class="kb-row hide-mobile">
+          <button type="button" class="keycap pill" data-clear="true"><span class="lbl-sm">esc</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">1</span><span class="lbl-br">f1</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">☼-</span><span class="lbl-br">f2</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">☼+</span><span class="lbl-br">f3</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">▭</span><span class="lbl-br">f4</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">⊞</span><span class="lbl-br">f5</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">🔇</span><span class="lbl-br">f6</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">🔉</span><span class="lbl-br">f7</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">🔊</span><span class="lbl-br">f8</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">|◀◀</span><span class="lbl-br">f9</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">▶|</span><span class="lbl-br">f10</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">▶▶|</span><span class="lbl-br">f11</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-tl">✈</span><span class="lbl-br">f12</span></button>
+          <button type="button" class="keycap pill"><span class="lbl-sm">prt scr</span></button>
+          <button type="button" class="keycap pill" data-clear="true"><span class="lbl-sm">delete</span></button>
+        </div>
+
+        <!-- Row 2: Number Row (2 é @ triggers 2nd A) -->
+        <div class="kb-row">
+          <button type="button" class="keycap w-half hide-mobile"><span class="lbl-tl">³</span><span class="lbl-bl">²</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">1</span><span class="lbl-c">&amp;</span><span class="lbl-br">|</span></button>
+          <button type="button" class="keycap" data-key="@"><span class="lbl-tl">2</span><span class="lbl-c">é</span><span class="lbl-br">@</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">3</span><span class="lbl-c">"</span><span class="lbl-br">#</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">4</span><span class="lbl-c">'</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">5</span><span class="lbl-c">(</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">6</span><span class="lbl-c">§</span><span class="lbl-br">^</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">7</span><span class="lbl-c">è</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">8</span><span class="lbl-c">!</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">9</span><span class="lbl-c">ç</span><span class="lbl-br">{</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">0</span><span class="lbl-c">à</span><span class="lbl-br">}</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">°</span><span class="lbl-c">)</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">-</span><span class="lbl-c">_</span></button>
+        </div>
+
+        <!-- Row 3: AZERTY Row -->
+        <div class="kb-row">
+          <button type="button" class="keycap w-tab hide-mobile"><span class="lbl-tl">|←</span><span class="lbl-bl">→|</span></button>
+          <button type="button" class="keycap" data-key="A"><span class="lbl-c">A</span></button>
+          <button type="button" class="keycap" data-key="Z"><span class="lbl-c">Z</span></button>
+          <button type="button" class="keycap" data-key="E"><span class="lbl-c">E</span></button>
+          <button type="button" class="keycap" data-key="R"><span class="lbl-c">R</span></button>
+          <button type="button" class="keycap" data-key="T"><span class="lbl-c">T</span></button>
+          <button type="button" class="keycap" data-key="Y"><span class="lbl-c">Y</span></button>
+          <button type="button" class="keycap" data-key="U"><span class="lbl-c">U</span></button>
+          <button type="button" class="keycap" data-key="I"><span class="lbl-c">I</span></button>
+          <button type="button" class="keycap" data-key="O"><span class="lbl-c">O</span></button>
+          <button type="button" class="keycap" data-key="P"><span class="lbl-c">P</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">¨</span><span class="lbl-c">^</span><span class="lbl-br">[</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">*</span><span class="lbl-c">$</span><span class="lbl-br">]</span></button>
+          <button type="button" class="keycap w-fill" data-key="E2"><span class="lbl-tl">E</span><span class="lbl-c">µ</span><span class="lbl-br">`</span></button>
+        </div>
+
+        <!-- Row 4: QSDFGHJKLM Row -->
+        <div class="kb-row">
+          <button type="button" class="keycap w-caps hide-mobile"><span class="lbl-sm">shift lock</span></button>
+          <button type="button" class="keycap" data-key="Q"><span class="lbl-c">Q</span></button>
+          <button type="button" class="keycap" data-key="S"><span class="lbl-c">S</span></button>
+          <button type="button" class="keycap" data-key="D"><span class="lbl-c">D</span></button>
+          <button type="button" class="keycap" data-key="F"><span class="lbl-c">F</span></button>
+          <button type="button" class="keycap" data-key="G"><span class="lbl-c">G</span></button>
+          <button type="button" class="keycap" data-key="H"><span class="lbl-c">H</span></button>
+          <button type="button" class="keycap" data-key="J"><span class="lbl-c">J</span></button>
+          <button type="button" class="keycap" data-key="K"><span class="lbl-c">K</span></button>
+          <button type="button" class="keycap" data-key="L"><span class="lbl-c">L</span></button>
+          <button type="button" class="keycap" data-key="M"><span class="lbl-c">M</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">%</span><span class="lbl-c">ù</span><span class="lbl-br">´</span></button>
+          <button type="button" class="keycap w-fill hide-mobile"><span class="lbl-c">↵</span></button>
+        </div>
+
+        <!-- Row 5: WXCVBN Row -->
+        <div class="kb-row">
+          <button type="button" class="keycap w-shift hide-mobile"><span class="lbl-c">↑</span></button>
+          <button type="button" class="keycap" data-key="W"><span class="lbl-c">W</span></button>
+          <button type="button" class="keycap" data-key="X"><span class="lbl-c">X</span></button>
+          <button type="button" class="keycap" data-key="C"><span class="lbl-c">C</span></button>
+          <button type="button" class="keycap" data-key="V"><span class="lbl-c">V</span></button>
+          <button type="button" class="keycap" data-key="B"><span class="lbl-c">B</span></button>
+          <button type="button" class="keycap" data-key="N"><span class="lbl-c">N</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">?</span><span class="lbl-c">,</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">.</span><span class="lbl-c">;</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">/</span><span class="lbl-c">:</span></button>
+          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">+</span><span class="lbl-c">=</span><span class="lbl-br">~</span></button>
+          <button type="button" class="keycap w-fill hide-mobile"></button>
+        </div>
+
+        <!-- Row 6: Bottom Space & Arrows -->
+        <div class="kb-row hide-mobile">
+          <button type="button" class="keycap w-ctrl"><span class="lbl-sm">ctrl</span></button>
+          <button type="button" class="keycap w-ctrl"><span class="lbl-sm">fn</span></button>
+          <button type="button" class="keycap w-ctrl" aria-label="Win">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="#dcdcdc">
+              <polygon points="0,2.2 6.8,1.2 6.8,7.6 0,7.6"/><polygon points="7.6,1.1 16,0 16,7.6 7.6,7.6"/>
+              <polygon points="0,8.4 6.8,8.4 6.8,14.8 0,13.8"/><polygon points="7.6,8.4 16,8.4 16,16 7.6,14.9"/>
+            </svg>
+          </button>
+          <button type="button" class="keycap w-ctrl"><span class="lbl-sm">alt gr</span></button>
+          <button type="button" class="keycap w-space" data-clear="true"></button>
+          <button type="button" class="keycap w-ctrl"><span class="lbl-sm">alt gr</span></button>
+          <button type="button" class="keycap w-ctrl"><span class="lbl-tl">&gt;</span><span class="lbl-c">&lt;</span><span class="lbl-br">\</span></button>
+          <button type="button" class="keycap" data-cycle="-1"><span class="lbl-c">‹</span></button>
+          <div class="split-arrows">
+            <button type="button" class="keycap" data-cycle="-1">▲</button>
+            <button type="button" class="keycap" data-cycle="1">▼</button>
+          </div>
+          <button type="button" class="keycap" data-cycle="1"><span class="lbl-c">›</span></button>
+        </div>
+      </div>
+
+      <!-- Right Numpad Block -->
+      <div class="kb-numpad">
+        <div class="kb-row">
+          <button type="button" class="keycap pill"></button>
+          <button type="button" class="keycap pill"></button>
+          <button type="button" class="keycap pill"></button>
+          <button type="button" class="keycap pill"></button>
+        </div>
+        <div class="numpad-grid">
+          <button type="button" class="keycap"><span class="lbl-sm" style="line-height:1.05; text-align:center;">num<br>lock</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">/</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">*</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">-</span></button>
+
+          <button type="button" class="keycap"><span class="lbl-c">7</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">8</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">9</span></button>
+          <button type="button" class="keycap" style="grid-row: span 2;"><span class="lbl-c">+</span></button>
+
+          <button type="button" class="keycap"><span class="lbl-c">4</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">6</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">5</span></button>
+
+          <button type="button" class="keycap"><span class="lbl-c">1</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">2</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">3</span></button>
+          <button type="button" class="keycap" style="grid-row: span 2;"><span class="lbl-c">↵</span></button>
+
+          <button type="button" class="keycap" style="grid-column: span 2;"><span class="lbl-c">0</span></button>
+          <button type="button" class="keycap"><span class="lbl-c">.</span></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. STATE & DOM REFERENCES (Declared first so script never halts)
+    // =========================================================================
+    let currentKey = null;
+    const photoIndices = {};
+
+    const chassis = document.getElementById("kbChassis");
+    const lowerthirdBox = document.getElementById("lowerthirdBox");
+    const idleHint = document.getElementById("idleHint");
+    const memoryImg = document.getElementById("memoryImg");
+
+    // Default mapping (also overridden by memories.json when hosted on GitHub)
+    let KEY_MEMORIES = {
+      "A":  [{ file: "anniversary celebrating.jpeg", title: "Anniversary Celebrating", sub: "Celebrating our special day" }],
+      "@":  [{ file: "anniversary celebrating.jpeg", title: "Anniversary Celebrating (@)", sub: "Second A • Special memory" }],
+      "B":  [{ file: "birthdaycelebration.jpeg", title: "Birthday Celebration", sub: "Making a birthday wish" }],
+      "C":  [{ file: "cycling.jpeg", title: "Cycling", sub: "Out on a bike ride together" }],
+      "D":  [{ file: "disneydate.jpeg", title: "Disney Date", sub: "Cozy Disney date" }],
+      "E":  [
+        { file: "eating1.jpeg", title: "Eating Together #1", sub: "Press E again for photo 2" },
+        { file: "eating2.jpeg", title: "Eating Together #2", sub: "Press E again for photo 1" }
+      ],
+      "E2": [{ file: "explore.jpeg", title: "Explore", sub: "Exploring new places together" }],
+      "F":  [{ file: "food festival.jpeg", title: "Food Festival", sub: "Tasting treats at the festival" }],
+      "G":  [{ file: "game.jpeg", title: "Game Time", sub: "Playful moments together" }],
+      "H":  [{ file: "hike.jpeg", title: "Hike", sub: "Out on the trail" }],
+      "I":  [{ file: "iceskating.jpeg", title: "Ice Skating", sub: "Gliding on the ice rink" }],
+      "J":  [{ file: "jeepride.jpeg", title: "Jeep Ride", sub: "Mountain jeep adventure" }],
+      "K":  [{ file: "kart.jpeg", title: "Kart Racing", sub: "Racing on the track" }],
+      "L":  [
+        { file: "lightshow.jpeg", title: "Light Show #1", sub: "Press L again for photo 2" },
+        { file: "lightshow2.jpeg", title: "Light Show #2", sub: "Press L again for photo 1" }
+      ],
+      "M":  [{ file: "moviedate.jpeg", title: "Movie Date", sub: "Cinema night together" }],
+      "N":  [{ file: "newyearcelebrations.jpeg", title: "New Year Celebrations", sub: "Ringing in the New Year" }],
+      "O":  [{ file: "oceanview.jpeg", title: "Ocean View", sub: "By the tropical sea" }],
+      "P":  [
+        { file: "photobooth.jpeg", title: "Photobooth #1", sub: "Press P again for photo 2" },
+        { file: "photobooth2.jpeg", title: "Photobooth #2", sub: "Press P again for photo 1" }
+      ],
+      "Q":  [
+        { file: "qualitytime.jpeg", title: "Quality Time #1", sub: "Press Q again for photo 2" },
+        { file: "qualitytime2.jpeg", title: "Quality Time #2", sub: "Press Q again for photo 1" }
+      ],
+      "R":  [{ file: "read.jpeg", title: "Reading Together", sub: "Bookstore date" }],
+      "S":  [
+        { file: "singapore.jpeg", title: "Singapore #1", sub: "Press S again for photo 2" },
+        { file: "singapore2.jpeg", title: "Singapore #2", sub: "Press S again for photo 1" }
+      ],
+      "T":  [{ file: "templerun.jpeg", title: "Temple Run", sub: "Visiting historic temples" }],
+      "U":  [{ file: "universalstudios.jpeg", title: "Universal Studios", sub: "Theme park adventure" }],
+      "V":  [{ file: "volcano.jpeg", title: "Volcano View", sub: "Exploring the volcano together" }],
+      "W":  [{ file: "waterpark.jpeg", title: "Waterpark", sub: "Sunshine & water slides" }],
+      "X":  [{ file: "explore.jpeg", title: "Explore", sub: "Adventuring side by side" }],
+      "Y":  [{ file: "yapping.jpeg", title: "Yapping", sub: "Endless conversations" }],
+      "Z":  [{ file: "zen.jpeg", title: "Zen Waterfall", sub: "Peaceful waterfall vibes" }]
+    };
+
+    // Load external memories.json if present in the repo
+    fetch("memories.json")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json) KEY_MEMORIES = json;
+      })
+      .catch(() => {});
+
+    // =========================================================================
+    // 2. KEY CLICK & KEYBOARD LISTENERS
+    // =========================================================================
+    document.querySelectorAll(".keycap[data-key]").forEach((btn) => {
+      const k = btn.dataset.key;
+      const list = KEY_MEMORIES[k];
+      if (list && list.length > 1) {
+        const dots = document.createElement("div");
+        dots.className = "multi-dots";
+        dots.innerHTML = "<span></span>".repeat(list.length);
+        btn.appendChild(dots);
+      }
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectKey(k);
+      });
+    });
+
+    document.querySelectorAll("[data-clear]").forEach((btn) => {
+      btn.addEventListener("click", clearSelection);
+    });
+
+    document.querySelectorAll("[data-cycle]").forEach((btn) => {
+      btn.addEventListener("click", () => cyclePhoto(parseInt(btn.dataset.cycle, 10)));
+    });
+
+    function selectKey(k) {
+      const list = KEY_MEMORIES[k];
+      if (!list) return;
+
+      if (currentKey === k && list.length > 1) {
+        photoIndices[k] = ((photoIndices[k] || 0) + 1) % list.length;
+      } else if (photoIndices[k] === undefined) {
+        photoIndices[k] = 0;
+      }
+
+      currentKey = k;
+
+      // Light up ONLY the pressed key and dim all other keys
+      chassis.classList.add("dim-mode");
+      document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
+      const activeBtn = document.querySelector(`.keycap[data-key="${k}"]`);
+      if (activeBtn) activeBtn.classList.add("active-key");
+
+      renderLowerThird(k);
+    }
+
+    function cyclePhoto(step) {
+      if (!currentKey || !KEY_MEMORIES[currentKey]) return;
+      const list = KEY_MEMORIES[currentKey];
+      if (list.length <= 1) return;
+      photoIndices[currentKey] = ((photoIndices[currentKey] || 0) + step + list.length) % list.length;
+      renderLowerThird(currentKey);
+    }
+
+    // Automatically checks root folder, memories/, and public/memories/
+    function loadPhotoWithFallback(filename) {
+      const encoded = encodeURIComponent(filename);
+      const paths = [
+        encoded,
+        `memories/${encoded}`,
+        `public/memories/${encoded}`
+      ];
+      let tryIdx = 0;
+      memoryImg.onerror = () => {
+        tryIdx++;
+        if (tryIdx < paths.length) {
+          memoryImg.src = paths[tryIdx];
+        }
+      };
+      memoryImg.src = paths[0];
+    }
+
+    function renderLowerThird(k) {
+      const list = KEY_MEMORIES[k];
+      const idx = photoIndices[k] || 0;
+      const item = list[idx];
+      if (!item) return;
+
+      idleHint.style.display = "none";
+      lowerthirdBox.classList.add("visible");
+
+      loadPhotoWithFallback(item.file);
+
+      document.getElementById("ltKeyPill").textContent = k === "@" ? "2 é @" : (k === "E2" ? "E µ" : k);
+      document.getElementById("ltFileTag").textContent = item.file.replace(".jpeg", "").toUpperCase();
+      document.getElementById("ltTitle").textContent = item.title;
+      document.getElementById("ltSub").textContent = item.sub;
+
+      const counter = document.getElementById("ltCounter");
+      if (list.length > 1) {
+        counter.classList.add("show");
+        counter.textContent = `${idx + 1} / ${list.length} ↻`;
+      } else {
+        counter.classList.remove("show");
+      }
+    }
+
+    function clearSelection() {
+      currentKey = null;
+      chassis.classList.remove("dim-mode");
+      document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
+      lowerthirdBox.classList.remove("visible");
+      idleHint.style.display = "block";
+    }
+
+    lowerthirdBox.addEventListener("click", () => {
+      if (currentKey && KEY_MEMORIES[currentKey] && KEY_MEMORIES[currentKey].length > 1) {
+        cyclePhoto(1);
+      }
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        clearSelection();
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        cyclePhoto(1);
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        cyclePhoto(-1);
+      } else if (e.key === "@" || e.key === "2" || e.key === "é") {
+        selectKey("@");
+      } else if (e.key === "µ") {
+        selectKey("E2");
+      } else if (/^[a-zA-Z]$/.test(e.key)) {
+        selectKey(e.key.toUpperCase());
+      }
+    });
+
+    // Mobile view toggle
+    const mobileBtn = document.getElementById("mobileModeBtn");
+    mobileBtn.addEventListener("click", () => {
+      const isTouch = chassis.classList.toggle("mobile-touch");
+      mobileBtn.textContent = isTouch
+        ? "📱 Switch to Full Miniature Keyboard"
+        : "📱 Switch to Large Mobile Keys";
+    });
+  </script>
+</body>
+</html>

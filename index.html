@@ -23,6 +23,7 @@
 
     body {
       min-height: 100vh;
+      min-height: 100dvh;
       background: radial-gradient(circle at 50% 15%, #16161d 0%, var(--bg) 75%);
       color: #ffffff;
       font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -30,7 +31,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 12px 22px;
+      padding: 14px 10px 18px;
       overflow-x: hidden;
     }
 
@@ -59,10 +60,6 @@
       background: #27272a;
     }
 
-    #mobileModeBtn {
-      display: none;
-    }
-
     /* =====================================================================
        COMPACT LOWER-THIRD STAGE + INTRO WORD DISPLAY
        ===================================================================== */
@@ -70,6 +67,7 @@
       width: 100%;
       max-width: 1180px;
       min-height: 225px;
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -84,7 +82,7 @@
       justify-content: center;
       gap: 10px;
       min-height: 64px;
-      font-size: clamp(1.9rem, 4vw, 3rem);
+      font-size: clamp(2rem, 5vw, 3.2rem);
       font-weight: 800;
       letter-spacing: 0.22em;
     }
@@ -116,6 +114,7 @@
     }
 
     .lowerthird-box {
+      position: relative;
       display: none;
       align-items: stretch;
       background: #0b0b0e;
@@ -127,7 +126,7 @@
       width: 100%;
       height: 210px;
       cursor: pointer;
-      animation: ltSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: ltSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .lowerthird-box.visible {
@@ -135,11 +134,29 @@
     }
 
     @keyframes ltSlideUp {
-      from { opacity: 0; transform: translateY(10px) scale(0.97); }
+      from { opacity: 0; transform: translateY(12px) scale(0.96); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Auto-Swipe Carousel Viewport */
+    /* Smooth Flowing Progress Bar for ESC A-to-Z Reel */
+    .reel-progress {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(255,255,255,0.4), #ffffff);
+      box-shadow: 0 0 10px #ffffff;
+      z-index: 10;
+      opacity: 0;
+      transition: width 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+    }
+
+    .reel-progress.active {
+      opacity: 1;
+    }
+
+    /* Auto-Swipe & Flowing Reel Carousel Viewport */
     .lt-photo-wrap {
       position: relative;
       width: 170px;
@@ -154,7 +171,8 @@
       display: flex;
       width: 100%;
       height: 100%;
-      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      transition: transform 0.68s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .lt-slide {
@@ -162,6 +180,7 @@
       width: 100%;
       height: 100%;
       flex-shrink: 0;
+      overflow: hidden;
     }
 
     .lt-slide img {
@@ -169,6 +188,12 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      transform: scale(1.04);
+      transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .lt-slide.active-slide img {
+      transform: scale(1);
     }
 
     /* Small Dots on Photo When Auto-Swiping 2 Images */
@@ -202,7 +227,7 @@
       transform: scale(1.2);
     }
 
-    /* Lower-Third Text Side */
+    /* Lower-Third Text Side with Smooth Transition */
     .lt-info {
       flex: 1;
       padding: 16px 18px;
@@ -233,10 +258,21 @@
       font-weight: 800;
       font-size: 0.92rem;
       box-shadow: 0 0 14px rgba(255, 255, 255, 0.65);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .lt-key-pill.pop {
+      transform: scale(1.14);
     }
 
     .lt-text-group {
       margin-top: auto;
+      transition: opacity 0.24s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .lt-text-group.fade-out {
+      opacity: 0;
+      transform: translateY(7px);
     }
 
     .lt-title {
@@ -268,7 +304,7 @@
       width: 100%;
       background: var(--kb-bg);
       border: 3px solid var(--kb-frame);
-      border-radius: clamp(14px, 2.2vw, 28px);
+      border-radius: clamp(16px, 2.2vw, 28px);
       padding: clamp(8px, 1.6vw, 20px);
       display: flex;
       gap: clamp(6px, 1.4vw, 18px);
@@ -281,7 +317,7 @@
       flex: 14.5;
       display: flex;
       flex-direction: column;
-      gap: clamp(3px, 0.55vw, 7px);
+      gap: clamp(4px, 0.55vw, 7px);
       min-width: 0;
     }
 
@@ -289,15 +325,20 @@
       flex: 4;
       display: flex;
       flex-direction: column;
-      gap: clamp(3px, 0.55vw, 7px);
+      gap: clamp(4px, 0.55vw, 7px);
       min-width: 0;
     }
 
     .kb-row {
       display: flex;
-      gap: clamp(3px, 0.55vw, 7px);
+      gap: clamp(4px, 0.55vw, 7px);
       width: 100%;
       align-items: stretch;
+    }
+
+    /* Mobile-only elements hidden on desktop */
+    .mobile-only {
+      display: none !important;
     }
 
     .keycap {
@@ -306,7 +347,7 @@
       aspect-ratio: 1 / 1;
       background: #0a0a0d;
       border: 1.6px solid var(--key-outer);
-      border-radius: clamp(5px, 0.9vw, 11px);
+      border-radius: clamp(6px, 0.9vw, 11px);
       color: #ffffff;
       cursor: pointer;
       display: flex;
@@ -315,7 +356,7 @@
       font-size: clamp(0.58rem, 1.12vw, 0.98rem);
       font-weight: 600;
       box-shadow: 0 2px 6px rgba(255, 255, 255, 0.06);
-      transition: opacity 0.2s ease, filter 0.2s ease, transform 0.12s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: opacity 0.28s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
       min-width: 0;
       padding: 0;
     }
@@ -323,9 +364,9 @@
     .keycap::after {
       content: "";
       position: absolute;
-      inset: clamp(1px, 0.2vw, 2.5px);
-      border: 1.5px solid var(--key-inner);
-      border-radius: clamp(3px, 0.7vw, 8px);
+      inset: clamp(1.5px, 0.2vw, 2.5px);
+      border: 1.4px solid var(--key-inner);
+      border-radius: clamp(4px, 0.7vw, 8px);
       pointer-events: none;
     }
 
@@ -356,7 +397,7 @@
        SUBTLE DIMMING + STRONG NEON GLOW ON PRESSED OR INTRO-LIT KEY
        ===================================================================== */
     .keyboard-chassis.dim-mode .keycap:not(.active-key) {
-      opacity: 0.62;
+      opacity: 0.55;
     }
 
     .keycap.active-key,
@@ -368,7 +409,7 @@
         0 0 24px #ffffff,
         0 0 10px rgba(255, 255, 255, 0.9),
         inset 0 0 14px rgba(255, 255, 255, 0.85);
-      transform: translateY(1px);
+      transform: translateY(-1px) scale(1.03);
       z-index: 2;
     }
 
@@ -380,7 +421,7 @@
 
     .multi-dots {
       position: absolute;
-      bottom: 12%;
+      bottom: 11%;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -406,7 +447,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       grid-template-rows: repeat(5, 1fr);
-      gap: clamp(3px, 0.55vw, 7px);
+      gap: clamp(4px, 0.55vw, 7px);
     }
 
     .numpad-grid .keycap {
@@ -429,17 +470,20 @@
       font-size: 0.65em;
     }
 
+    /* =====================================================================
+       MOBILE KEYBOARD POLISH (Uniform 10-Unit Grid + Crisp Proportions)
+       ===================================================================== */
     @media (max-width: 768px) {
-      #mobileModeBtn {
-        display: inline-block;
+      .utility-bar {
+        display: none;
       }
 
       .stage-area {
-        min-height: 180px;
+        min-height: 185px;
       }
 
       .lowerthird-box {
-        height: 172px;
+        height: 174px;
         max-width: 96vw;
       }
 
@@ -455,15 +499,82 @@
         font-size: 0.76rem;
       }
 
+      .keyboard-chassis.mobile-touch {
+        padding: 10px 8px;
+        border-radius: 22px;
+        border-width: 2.5px;
+      }
+
+      .keyboard-chassis.mobile-touch .kb-main {
+        gap: 6px;
+      }
+
+      .keyboard-chassis.mobile-touch .kb-row {
+        gap: 4.5px;
+      }
+
       .keyboard-chassis.mobile-touch .kb-numpad,
       .keyboard-chassis.mobile-touch .hide-mobile {
         display: none !important;
       }
 
+      .keyboard-chassis.mobile-touch .mobile-only {
+        display: flex !important;
+      }
+
       .keyboard-chassis.mobile-touch .keycap {
         aspect-ratio: auto;
-        height: 44px;
+        height: 46px;
         font-size: 0.92rem;
+        border-radius: 8px;
+        border-width: 1.2px;
+      }
+
+      .keyboard-chassis.mobile-touch .keycap::after {
+        inset: 1.5px;
+        border-width: 1.1px;
+        border-radius: 6px;
+      }
+
+      /* Sleek top pill row on mobile */
+      .keyboard-chassis.mobile-touch .keycap.pill {
+        height: 27px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+      }
+
+      .keyboard-chassis.mobile-touch .keycap.pill::after {
+        border-radius: 999px;
+      }
+
+      /* Prevent number-row corner legends from colliding on narrow mobile keys */
+      .keyboard-chassis.mobile-touch .lbl-tl {
+        top: 4px;
+        left: 4px;
+        font-size: 0.54em;
+        opacity: 0.88;
+      }
+
+      .keyboard-chassis.mobile-touch .lbl-br {
+        bottom: 4px;
+        right: 4px;
+        font-size: 0.54em;
+        opacity: 0.88;
+      }
+
+      /* Nudge letter slightly up when it has 2-photo dots below it */
+      .keyboard-chassis.mobile-touch .keycap.has-dots .lbl-c {
+        transform: translateY(-2px);
+      }
+
+      .keyboard-chassis.mobile-touch .multi-dots {
+        bottom: 5px;
+        gap: 2px;
+      }
+
+      .keyboard-chassis.mobile-touch .multi-dots span {
+        width: 3px;
+        height: 3px;
       }
     }
   </style>
@@ -472,7 +583,6 @@
 
   <div class="utility-bar">
     <button class="util-btn" id="replayIntroBtn">↻ Replay Intro</button>
-    <button class="util-btn" id="mobileModeBtn">📱 Switch to Full Miniature Keyboard</button>
   </div>
 
   <!-- Compact Lower-Third Display Box & Intro Word Banner -->
@@ -492,11 +602,12 @@
         <div class="lt-top-row">
           <span class="lt-key-pill" id="ltKeyPill">A</span>
         </div>
-        <div class="lt-text-group">
+        <div class="lt-text-group" id="ltTextGroup">
           <div class="lt-title" id="ltTitle">Anniversary</div>
           <div class="lt-sub" id="ltSub">Celebrating us and every milestone together.</div>
         </div>
       </div>
+      <div class="reel-progress" id="reelProgress"></div>
     </div>
   </div>
 
@@ -505,9 +616,17 @@
     <div class="keyboard-chassis mobile-touch" id="kbChassis">
 
       <div class="kb-main">
-        <!-- Row 1: Function Pill Keys -->
+        <!-- Mobile-Only Top Pill Row (Gives mobile direct access to ESC A-Z reel, Replay, and Full KB) -->
+        <div class="kb-row mobile-only">
+          <button type="button" class="keycap pill" data-esc="true"><span class="lbl-sm">esc • A–Z</span></button>
+          <button type="button" class="keycap pill" data-replay="true"><span class="lbl-sm">↻ intro</span></button>
+          <button type="button" class="keycap pill" data-toggle-kb="true"><span class="lbl-sm">full kb</span></button>
+          <button type="button" class="keycap pill" data-clear="true"><span class="lbl-sm">clear</span></button>
+        </div>
+
+        <!-- Row 1: Desktop Function Pill Keys -->
         <div class="kb-row hide-mobile">
-          <button type="button" class="keycap pill" id="escKeyBtn"><span class="lbl-sm">esc</span></button>
+          <button type="button" class="keycap pill" data-esc="true"><span class="lbl-sm">esc</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">1</span><span class="lbl-br">f1</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">☼-</span><span class="lbl-br">f2</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">☼+</span><span class="lbl-br">f3</span></button>
@@ -524,7 +643,7 @@
           <button type="button" class="keycap pill" data-clear="true"><span class="lbl-sm">delete</span></button>
         </div>
 
-        <!-- Row 2: Number Row (2 é @ triggers 2nd A) -->
+        <!-- Row 2: Number Row (10 keys on mobile: 1 through 0) -->
         <div class="kb-row">
           <button type="button" class="keycap w-half hide-mobile"><span class="lbl-tl">³</span><span class="lbl-bl">²</span></button>
           <button type="button" class="keycap"><span class="lbl-tl">1</span><span class="lbl-c">&amp;</span><span class="lbl-br">|</span></button>
@@ -541,7 +660,7 @@
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">-</span><span class="lbl-c">_</span></button>
         </div>
 
-        <!-- Row 3: AZERTY Row -->
+        <!-- Row 3: AZERTY Row (10 keys on mobile: A through P) -->
         <div class="kb-row">
           <button type="button" class="keycap w-tab hide-mobile"><span class="lbl-tl">|←</span><span class="lbl-bl">→|</span></button>
           <button type="button" class="keycap" data-key="A"><span class="lbl-c">A</span></button>
@@ -556,10 +675,10 @@
           <button type="button" class="keycap" data-key="P"><span class="lbl-c">P</span></button>
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">¨</span><span class="lbl-c">^</span><span class="lbl-br">[</span></button>
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">*</span><span class="lbl-c">$</span><span class="lbl-br">]</span></button>
-          <button type="button" class="keycap w-fill" data-key="E2"><span class="lbl-tl">E</span><span class="lbl-c">µ</span><span class="lbl-br">`</span></button>
+          <button type="button" class="keycap w-fill hide-mobile" data-key="E2"><span class="lbl-tl">E</span><span class="lbl-c">µ</span><span class="lbl-br">`</span></button>
         </div>
 
-        <!-- Row 4: QSDFGHJKLM Row -->
+        <!-- Row 4: QSDFGHJKLM Row (10 keys on mobile: Q through M) -->
         <div class="kb-row">
           <button type="button" class="keycap w-caps hide-mobile"><span class="lbl-sm">shift lock</span></button>
           <button type="button" class="keycap" data-key="Q"><span class="lbl-c">Q</span></button>
@@ -576,16 +695,18 @@
           <button type="button" class="keycap w-fill hide-mobile"><span class="lbl-c">↵</span></button>
         </div>
 
-        <!-- Row 5: WXCVBN Row -->
+        <!-- Row 5: WXCVBN Row (Balanced 10-unit width on mobile: ↑ [1.5] + W..N [6] + ?, [1] + Eµ [1.5]) -->
         <div class="kb-row">
           <button type="button" class="keycap w-shift hide-mobile"><span class="lbl-c">↑</span></button>
+          <button type="button" class="keycap mobile-only" style="flex: 1.5;" data-esc="true"><span class="lbl-c">↑</span></button>
           <button type="button" class="keycap" data-key="W"><span class="lbl-c">W</span></button>
           <button type="button" class="keycap" data-key="X"><span class="lbl-c">X</span></button>
           <button type="button" class="keycap" data-key="C"><span class="lbl-c">C</span></button>
           <button type="button" class="keycap" data-key="V"><span class="lbl-c">V</span></button>
           <button type="button" class="keycap" data-key="B"><span class="lbl-c">B</span></button>
           <button type="button" class="keycap" data-key="N"><span class="lbl-c">N</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">?</span><span class="lbl-c">,</span></button>
+          <button type="button" class="keycap"><span class="lbl-tl">?</span><span class="lbl-c">,</span></button>
+          <button type="button" class="keycap mobile-only" style="flex: 1.5;" data-key="E2"><span class="lbl-tl">E</span><span class="lbl-c">µ</span><span class="lbl-br">`</span></button>
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">.</span><span class="lbl-c">;</span></button>
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">/</span><span class="lbl-c">:</span></button>
           <button type="button" class="keycap hide-mobile"><span class="lbl-tl">+</span><span class="lbl-c">=</span><span class="lbl-br">~</span></button>
@@ -618,7 +739,7 @@
       <!-- Right Numpad Block -->
       <div class="kb-numpad">
         <div class="kb-row">
-          <button type="button" class="keycap pill"></button>
+          <button type="button" class="keycap pill" data-toggle-kb="true"><span class="lbl-sm">mobile</span></button>
           <button type="button" class="keycap pill"></button>
           <button type="button" class="keycap pill"></button>
           <button type="button" class="keycap pill"></button>
@@ -686,7 +807,6 @@
       "Z":  { title: "Zen", sub: "Peace is just being right there with you, sayang.", files: ["zen.jpeg"] }
     };
 
-    // Preload all images in the background so the Escape alphabetical flash-by is instant
     function preloadAllImages() {
       const seen = new Set();
       Object.values(KEY_MEMORIES).forEach((entry) => {
@@ -699,15 +819,16 @@
     }
 
     // =========================================================================
-    // 2. INTRO ANIMATION & ESCAPE ALPHABETICAL FLASH-BY
+    // 2. INTRO ANIMATION & SMOOTH FLOWING ESCAPE A-TO-Z REEL
     // =========================================================================
-    const INTRO_WORDS = ["AULI@", "I", "LOVE", "YOU", "CUZ", "YOU", "ARE", "SPECIAL"];
+    const INTRO_WORDS  = ["AULI@", "I", "LOVE", "YOU", "CUZ", "YOU", "ARE", "SPECIAL"];
     const LETTER_DELAY = 360;
     const WORD_HOLD    = 850;
-    const FLASH_SPEED  = 340; // ms per card during Escape alphabetical flash-by
+    const REEL_STEP_MS = 1050; // Smooth, flowing pace per card during ESC reel
 
     let introTimers = [];
     let flashTimers = [];
+    let isReelPlaying = false;
     let currentKey = null;
     let currentSlideIdx = 0;
     let autoSwipeTimer = null;
@@ -718,6 +839,14 @@
     const introBanner = document.getElementById("introWordBanner");
     const sliderTrack = document.getElementById("ltSliderTrack");
     const slideDots = document.getElementById("ltSlideDots");
+    const textGroup = document.getElementById("ltTextGroup");
+    const keyPill = document.getElementById("ltKeyPill");
+    const reelProgress = document.getElementById("reelProgress");
+
+    function highlightMatchingKeys(k) {
+      document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
+      document.querySelectorAll(`.keycap[data-key="${k}"]`).forEach((el) => el.classList.add("active-key"));
+    }
 
     function stopIntroAnimation() {
       introTimers.forEach(clearTimeout);
@@ -730,6 +859,9 @@
     function stopAlphabetFlash() {
       flashTimers.forEach(clearTimeout);
       flashTimers = [];
+      isReelPlaying = false;
+      reelProgress.classList.remove("active");
+      reelProgress.style.width = "0%";
     }
 
     function playIntroSequence() {
@@ -752,8 +884,9 @@
         word.split("").forEach((ch) => {
           elapsed += LETTER_DELAY;
           const letterTimer = setTimeout(() => {
-            const keyBtn = document.querySelector(`.keycap[data-key="${ch}"]`);
-            if (keyBtn) keyBtn.classList.add("intro-lit");
+            document.querySelectorAll(`.keycap[data-key="${ch}"]`).forEach((btn) => {
+              btn.classList.add("intro-lit");
+            });
 
             const span = document.createElement("span");
             span.className = "intro-letter";
@@ -773,11 +906,18 @@
       introTimers.push(endTimer);
     }
 
-    // Flash all cards in alphabetical order (A -> Z, including each photo slide)
+    // Smooth, Continuous A-to-Z Flowing Reel
     function playAlphabetFlash() {
+      if (isReelPlaying) {
+        stopAlphabetFlash();
+        clearSelection(true);
+        return;
+      }
+
       stopIntroAnimation();
       stopAlphabetFlash();
       clearInterval(autoSwipeTimer);
+      isReelPlaying = true;
 
       const alphabetKeys = Object.keys(KEY_MEMORIES)
         .filter((k) => /^[A-Z]$/.test(k))
@@ -786,40 +926,104 @@
       const steps = [];
       alphabetKeys.forEach((k) => {
         const entry = KEY_MEMORIES[k];
-        entry.files.forEach((_, slideIndex) => {
-          steps.push({ k, entry, slideIndex });
+        entry.files.forEach((file, fileIdx) => {
+          steps.push({ k, entry, file, fileIdx, totalForKey: entry.files.length });
         });
       });
 
+      // Build one continuous horizontal filmstrip of all A-Z photos so it glides without DOM cuts
+      idleHint.style.display = "none";
+      lowerthirdBox.classList.add("visible");
+      slideDots.classList.remove("show");
+      sliderTrack.style.transition = "none";
+      sliderTrack.innerHTML = "";
+      sliderTrack.style.transform = "translateX(0%)";
+
+      steps.forEach((step, idx) => {
+        const slide = document.createElement("div");
+        slide.className = "lt-slide" + (idx === 0 ? " active-slide" : "");
+        slide.appendChild(createImageWithFallback(step.file, step.entry.title));
+        sliderTrack.appendChild(slide);
+      });
+
+      void sliderTrack.offsetWidth;
+      sliderTrack.style.transition = "transform 0.68s cubic-bezier(0.22, 1, 0.36, 1)";
+
+      reelProgress.classList.add("active");
+      reelProgress.style.width = "0%";
+
+      let prevKey = null;
+
       steps.forEach((step, idx) => {
         const timer = setTimeout(() => {
-          // Highlight current key on keyboard
+          // 1. Glide keyboard highlight to current letter
           chassis.classList.add("dim-mode");
-          document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
-          const activeBtn = document.querySelector(`.keycap[data-key="${step.k}"]`);
-          if (activeBtn) activeBtn.classList.add("active-key");
+          highlightMatchingKeys(step.k);
 
-          if (currentKey !== step.k || idx === 0) {
+          // 2. Smoothly glide photo filmstrip to current slide
+          sliderTrack.style.transform = `translateX(-${idx * 100}%)`;
+          const allSlides = sliderTrack.querySelectorAll(".lt-slide");
+          allSlides.forEach((s, sIdx) => s.classList.toggle("active-slide", sIdx === idx));
+
+          // 3. Update progress bar
+          reelProgress.style.width = `${((idx + 1) / steps.length) * 100}%`;
+
+          // 4. Smoothly crossfade/slide text whenever the letter changes
+          if (step.k !== prevKey) {
             currentKey = step.k;
-            currentSlideIdx = step.slideIndex;
-            renderLowerThird(step.k, step.entry, false);
-          }
+            prevKey = step.k;
 
-          if (step.slideIndex > 0) {
-            currentSlideIdx = step.slideIndex;
-            sliderTrack.style.transform = `translateX(-${step.slideIndex * 100}%)`;
-            const dots = slideDots.querySelectorAll("span");
-            dots.forEach((d, dIdx) => d.classList.toggle("active-dot", dIdx === step.slideIndex));
+            keyPill.classList.add("pop");
+            setTimeout(() => keyPill.classList.remove("pop"), 240);
+
+            if (idx === 0) {
+              keyPill.textContent = step.k;
+              document.getElementById("ltTitle").textContent = step.entry.title;
+              document.getElementById("ltSub").textContent = step.entry.sub;
+            } else {
+              textGroup.classList.add("fade-out");
+              setTimeout(() => {
+                keyPill.textContent = step.k;
+                document.getElementById("ltTitle").textContent = step.entry.title;
+                document.getElementById("ltSub").textContent = step.entry.sub;
+                textGroup.classList.remove("fade-out");
+              }, 170);
+            }
           }
-        }, idx * FLASH_SPEED);
+        }, idx * REEL_STEP_MS);
+
         flashTimers.push(timer);
       });
+
+      // Reset cleanly after the final 'Z' card finishes
+      const finishTimer = setTimeout(() => {
+        isReelPlaying = false;
+        reelProgress.classList.remove("active");
+      }, steps.length * REEL_STEP_MS + 600);
+      flashTimers.push(finishTimer);
     }
 
     document.getElementById("replayIntroBtn").addEventListener("click", playIntroSequence);
-    document.getElementById("escKeyBtn").addEventListener("click", (e) => {
-      e.stopPropagation();
-      playAlphabetFlash();
+
+    document.querySelectorAll("[data-esc]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playAlphabetFlash();
+      });
+    });
+
+    document.querySelectorAll("[data-replay]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playIntroSequence();
+      });
+    });
+
+    document.querySelectorAll("[data-toggle-kb]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        chassis.classList.toggle("mobile-touch");
+      });
     });
 
     // =========================================================================
@@ -829,6 +1033,7 @@
       const k = btn.dataset.key;
       const entry = KEY_MEMORIES[k];
       if (entry && entry.files && entry.files.length > 1) {
+        btn.classList.add("has-dots");
         const dots = document.createElement("div");
         dots.className = "multi-dots";
         dots.innerHTML = "<span></span>".repeat(entry.files.length);
@@ -869,10 +1074,11 @@
       const entry = KEY_MEMORIES[k];
       if (!entry) return;
 
+      const wasReel = isReelPlaying;
       stopIntroAnimation();
       stopAlphabetFlash();
 
-      if (currentKey === k && entry.files.length > 1) {
+      if (!wasReel && currentKey === k && entry.files.length > 1) {
         stepSlide(1);
         return;
       }
@@ -881,9 +1087,7 @@
       currentSlideIdx = 0;
 
       chassis.classList.add("dim-mode");
-      document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
-      const activeBtn = document.querySelector(`.keycap[data-key="${k}"]`);
-      if (activeBtn) activeBtn.classList.add("active-key");
+      highlightMatchingKeys(k);
 
       renderLowerThird(k, entry, true);
     }
@@ -894,15 +1098,19 @@
       idleHint.style.display = "none";
       lowerthirdBox.classList.add("visible");
 
+      sliderTrack.style.transition = "none";
       sliderTrack.innerHTML = "";
       sliderTrack.style.transform = "translateX(0%)";
 
-      entry.files.forEach((file) => {
+      entry.files.forEach((file, idx) => {
         const slide = document.createElement("div");
-        slide.className = "lt-slide";
+        slide.className = "lt-slide" + (idx === 0 ? " active-slide" : "");
         slide.appendChild(createImageWithFallback(file, entry.title));
         sliderTrack.appendChild(slide);
       });
+
+      void sliderTrack.offsetWidth;
+      sliderTrack.style.transition = "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)";
 
       slideDots.innerHTML = "";
       if (entry.files.length > 1) {
@@ -922,18 +1130,22 @@
         slideDots.classList.remove("show");
       }
 
-      document.getElementById("ltKeyPill").textContent = k === "@" ? "2 é @" : (k === "E2" ? "E µ" : k);
+      textGroup.classList.remove("fade-out");
+      keyPill.textContent = k === "@" ? "2 é @" : (k === "E2" ? "E µ" : k);
       document.getElementById("ltTitle").textContent = entry.title;
       document.getElementById("ltSub").textContent = entry.sub;
     }
 
     function stepSlide(dir, resetTimer = true) {
-      if (!currentKey || !KEY_MEMORIES[currentKey]) return;
+      if (!currentKey || !KEY_MEMORIES[currentKey] || isReelPlaying) return;
       const files = KEY_MEMORIES[currentKey].files;
       if (!files || files.length <= 1) return;
 
       currentSlideIdx = (currentSlideIdx + dir + files.length) % files.length;
       sliderTrack.style.transform = `translateX(-${currentSlideIdx * 100}%)`;
+
+      const allSlides = sliderTrack.querySelectorAll(".lt-slide");
+      allSlides.forEach((s, idx) => s.classList.toggle("active-slide", idx === currentSlideIdx));
 
       const dots = slideDots.querySelectorAll("span");
       dots.forEach((d, idx) => d.classList.toggle("active-dot", idx === currentSlideIdx));
@@ -1008,15 +1220,6 @@
       } else {
         lastOutsideTap = now;
       }
-    });
-
-    // Mobile view toggle
-    const mobileBtn = document.getElementById("mobileModeBtn");
-    mobileBtn.addEventListener("click", () => {
-      const isTouch = chassis.classList.toggle("mobile-touch");
-      mobileBtn.textContent = isTouch
-        ? "📱 Switch to Full Miniature Keyboard"
-        : "📱 Switch to Large Mobile Keys";
     });
 
     window.addEventListener("DOMContentLoaded", () => {

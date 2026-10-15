@@ -507,7 +507,7 @@
       <div class="kb-main">
         <!-- Row 1: Function Pill Keys -->
         <div class="kb-row hide-mobile">
-          <button type="button" class="keycap pill" data-clear="true"><span class="lbl-sm">esc</span></button>
+          <button type="button" class="keycap pill" id="escKeyBtn"><span class="lbl-sm">esc</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">1</span><span class="lbl-br">f1</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">☼-</span><span class="lbl-br">f2</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">☼+</span><span class="lbl-br">f3</span></button>
@@ -653,7 +653,7 @@
 
   <script>
     // =========================================================================
-    // 1. MEMORIES DATA (Your exact custom descriptions)
+    // 1. MEMORIES DATA
     // =========================================================================
     const KEY_MEMORIES = {
       "A":  { title: "Anniversary", sub: "Celebrating us and every milestone with my sayang.", files: ["anniversary celebrating.jpeg"] },
@@ -686,15 +686,28 @@
       "Z":  { title: "Zen", sub: "Peace is just being right there with you, sayang.", files: ["zen.jpeg"] }
     };
 
+    // Preload all images in the background so the Escape alphabetical flash-by is instant
+    function preloadAllImages() {
+      const seen = new Set();
+      Object.values(KEY_MEMORIES).forEach((entry) => {
+        entry.files.forEach((file) => {
+          if (seen.has(file)) return;
+          seen.add(file);
+          createImageWithFallback(file, "");
+        });
+      });
+    }
+
     // =========================================================================
-    // 2. WORD-BY-WORD INTRO ANIMATION
-    //    Sequence: AULI@, I, LOVE, YOU, CUZ, YOU, ARE, SPECIAL
+    // 2. INTRO ANIMATION & ESCAPE ALPHABETICAL FLASH-BY
     // =========================================================================
     const INTRO_WORDS = ["AULI@", "I", "LOVE", "YOU", "CUZ", "YOU", "ARE", "SPECIAL"];
-    const LETTER_DELAY = 360; // ms between letters in a word
-    const WORD_HOLD    = 850; // ms to keep the completed word lit before next word
+    const LETTER_DELAY = 360;
+    const WORD_HOLD    = 850;
+    const FLASH_SPEED  = 340; // ms per card during Escape alphabetical flash-by
 
     let introTimers = [];
+    let flashTimers = [];
     let currentKey = null;
     let currentSlideIdx = 0;
     let autoSwipeTimer = null;
@@ -714,7 +727,13 @@
       introBanner.innerHTML = "";
     }
 
+    function stopAlphabetFlash() {
+      flashTimers.forEach(clearTimeout);
+      flashTimers = [];
+    }
+
     function playIntroSequence() {
+      stopAlphabetFlash();
       stopIntroAnimation();
       clearSelection(false);
 
@@ -724,21 +743,17 @@
       let elapsed = 250;
 
       INTRO_WORDS.forEach((word) => {
-        // Clear previous word's lit keys and start new word
         const startWordTimer = setTimeout(() => {
           document.querySelectorAll(".keycap.intro-lit").forEach((el) => el.classList.remove("intro-lit"));
           introBanner.innerHTML = "";
         }, elapsed);
         introTimers.push(startWordTimer);
 
-        // Light up each letter of the current word 1-by-1 without dimming previous letters in the word
         word.split("").forEach((ch) => {
           elapsed += LETTER_DELAY;
           const letterTimer = setTimeout(() => {
             const keyBtn = document.querySelector(`.keycap[data-key="${ch}"]`);
-            if (keyBtn) {
-              keyBtn.classList.add("intro-lit");
-            }
+            if (keyBtn) keyBtn.classList.add("intro-lit");
 
             const span = document.createElement("span");
             span.className = "intro-letter";
@@ -748,21 +763,64 @@
           introTimers.push(letterTimer);
         });
 
-        // Hold completed word before moving to the next word
         elapsed += WORD_HOLD;
       });
 
-      // Finish sequence and show idle prompt
       const endTimer = setTimeout(() => {
         stopIntroAnimation();
-        if (!currentKey) {
-          idleHint.style.display = "block";
-        }
+        if (!currentKey) idleHint.style.display = "block";
       }, elapsed + 300);
       introTimers.push(endTimer);
     }
 
+    // Flash all cards in alphabetical order (A -> Z, including each photo slide)
+    function playAlphabetFlash() {
+      stopIntroAnimation();
+      stopAlphabetFlash();
+      clearInterval(autoSwipeTimer);
+
+      const alphabetKeys = Object.keys(KEY_MEMORIES)
+        .filter((k) => /^[A-Z]$/.test(k))
+        .sort();
+
+      const steps = [];
+      alphabetKeys.forEach((k) => {
+        const entry = KEY_MEMORIES[k];
+        entry.files.forEach((_, slideIndex) => {
+          steps.push({ k, entry, slideIndex });
+        });
+      });
+
+      steps.forEach((step, idx) => {
+        const timer = setTimeout(() => {
+          // Highlight current key on keyboard
+          chassis.classList.add("dim-mode");
+          document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
+          const activeBtn = document.querySelector(`.keycap[data-key="${step.k}"]`);
+          if (activeBtn) activeBtn.classList.add("active-key");
+
+          if (currentKey !== step.k || idx === 0) {
+            currentKey = step.k;
+            currentSlideIdx = step.slideIndex;
+            renderLowerThird(step.k, step.entry, false);
+          }
+
+          if (step.slideIndex > 0) {
+            currentSlideIdx = step.slideIndex;
+            sliderTrack.style.transform = `translateX(-${step.slideIndex * 100}%)`;
+            const dots = slideDots.querySelectorAll("span");
+            dots.forEach((d, dIdx) => d.classList.toggle("active-dot", dIdx === step.slideIndex));
+          }
+        }, idx * FLASH_SPEED);
+        flashTimers.push(timer);
+      });
+    }
+
     document.getElementById("replayIntroBtn").addEventListener("click", playIntroSequence);
+    document.getElementById("escKeyBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      playAlphabetFlash();
+    });
 
     // =========================================================================
     // 3. AUTO-SWIPE CAROUSEL & KEY SELECTION LOGIC
@@ -783,7 +841,10 @@
     });
 
     document.querySelectorAll("[data-clear]").forEach((btn) => {
-      btn.addEventListener("click", () => clearSelection(true));
+      btn.addEventListener("click", () => {
+        stopAlphabetFlash();
+        clearSelection(true);
+      });
     });
 
     document.querySelectorAll("[data-cycle]").forEach((btn) => {
@@ -808,10 +869,9 @@
       const entry = KEY_MEMORIES[k];
       if (!entry) return;
 
-      // Stop intro if user presses a key while it's running
       stopIntroAnimation();
+      stopAlphabetFlash();
 
-      // If pressing the same multi-image key again, swipe immediately to next image
       if (currentKey === k && entry.files.length > 1) {
         stepSlide(1);
         return;
@@ -820,16 +880,15 @@
       currentKey = k;
       currentSlideIdx = 0;
 
-      // Light up pressed key and gently soften others
       chassis.classList.add("dim-mode");
       document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
       const activeBtn = document.querySelector(`.keycap[data-key="${k}"]`);
       if (activeBtn) activeBtn.classList.add("active-key");
 
-      renderLowerThird(k, entry);
+      renderLowerThird(k, entry, true);
     }
 
-    function renderLowerThird(k, entry) {
+    function renderLowerThird(k, entry, enableAutoSwipe = true) {
       clearInterval(autoSwipeTimer);
 
       idleHint.style.display = "none";
@@ -854,9 +913,11 @@
           slideDots.appendChild(dot);
         });
 
-        autoSwipeTimer = setInterval(() => {
-          stepSlide(1, false);
-        }, 2800);
+        if (enableAutoSwipe) {
+          autoSwipeTimer = setInterval(() => {
+            stepSlide(1, false);
+          }, 2800);
+        }
       } else {
         slideDots.classList.remove("show");
       }
@@ -896,8 +957,7 @@
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        stopIntroAnimation();
-        clearSelection(true);
+        playAlphabetFlash();
       } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         stepSlide(1, true);
       } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
@@ -911,6 +971,45 @@
       }
     });
 
+    // =========================================================================
+    // 4. DOUBLE-TAP / DOUBLE-CLICK OUTSIDE KEYBOARD FOR FULLSCREEN
+    // =========================================================================
+    function toggleFullscreen() {
+      const doc = document;
+      const elem = doc.documentElement;
+      if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen().catch(() => {});
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        }
+      } else {
+        if (doc.exitFullscreen) {
+          doc.exitFullscreen().catch(() => {});
+        } else if (doc.webkitExitFullscreen) {
+          doc.webkitExitFullscreen();
+        }
+      }
+    }
+
+    let lastOutsideTap = 0;
+    document.addEventListener("pointerup", (e) => {
+      if (
+        e.target.closest("#kbChassis") ||
+        e.target.closest("#lowerthirdBox") ||
+        e.target.closest(".utility-bar")
+      ) {
+        return;
+      }
+      const now = Date.now();
+      if (now - lastOutsideTap < 320) {
+        toggleFullscreen();
+        lastOutsideTap = 0;
+      } else {
+        lastOutsideTap = now;
+      }
+    });
+
     // Mobile view toggle
     const mobileBtn = document.getElementById("mobileModeBtn");
     mobileBtn.addEventListener("click", () => {
@@ -920,8 +1019,10 @@
         : "📱 Switch to Large Mobile Keys";
     });
 
-    // Start intro word sequence automatically on page load
-    window.addEventListener("DOMContentLoaded", playIntroSequence);
+    window.addEventListener("DOMContentLoaded", () => {
+      preloadAllImages();
+      playIntroSequence();
+    });
   </script>
 </body>
 </html>

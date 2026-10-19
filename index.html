@@ -11,6 +11,7 @@
       --kb-frame: #ffffff;
       --key-outer: #d4d4d8;
       --key-inner: #ffffff;
+      --active-rgb: #00f0ff;
     }
 
     * {
@@ -25,8 +26,8 @@
       min-height: 100vh;
       min-height: 100dvh;
       background:
-        radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.08) 0%, transparent 55%),
-        radial-gradient(circle at 50% 0%, #171721 0%, var(--bg) 75%);
+        radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.07) 0%, transparent 55%),
+        radial-gradient(circle at 50% 0%, #151520 0%, var(--bg) 75%);
       color: #ffffff;
       font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
@@ -78,15 +79,15 @@
       padding: 0 12px;
       border-radius: 14px;
       background: linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.05));
-      border: 2px solid #ffffff;
+      border: 2px solid var(--active-rgb);
       font-size: clamp(1.5rem, 3.8vw, 2.4rem);
       font-weight: 800;
       color: #ffffff;
-      text-shadow: 0 0 18px #ffffff;
+      text-shadow: 0 0 18px var(--active-rgb), 0 0 8px #ffffff;
       box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.75),
-        0 0 24px rgba(255, 255, 255, 0.55),
-        inset 0 0 14px rgba(255, 255, 255, 0.45);
+        0 0 26px var(--active-rgb),
+        inset 0 0 14px var(--active-rgb);
       transform-origin: center bottom;
       animation: tile3DIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
@@ -114,7 +115,11 @@
 
     @keyframes wordCompletePulse {
       0%   { transform: translateY(0) scale(1); }
-      45%  { transform: translateY(-8px) scale(1.1); box-shadow: 0 0 38px #ffffff, inset 0 0 20px #ffffff; }
+      45%  {
+        transform: translateY(-8px) scale(1.1);
+        border-color: #ffffff;
+        box-shadow: 0 0 42px var(--active-rgb), 0 0 20px #ffffff, inset 0 0 22px #ffffff;
+      }
       100% { transform: translateY(0) scale(1); }
     }
 
@@ -126,7 +131,7 @@
       }
     }
 
-    /* 2. Single Key Lower-Third Box with 3D Spring Entrance & Glass Shine */
+    /* 2. Single Key Lower-Third Box with Dynamic RGB Glow */
     .lowerthird-box {
       position: relative;
       display: none;
@@ -137,12 +142,14 @@
       overflow: hidden;
       box-shadow:
         0 20px 50px rgba(0, 0, 0, 0.92),
-        0 0 30px rgba(255, 255, 255, 0.28);
+        0 0 32px var(--active-rgb),
+        0 0 12px rgba(255, 255, 255, 0.35);
       max-width: 490px;
       width: 100%;
       height: 210px;
       cursor: pointer;
       transform-style: preserve-3d;
+      transition: box-shadow 0.35s ease, border-color 0.35s ease;
     }
 
     .lowerthird-box.visible {
@@ -160,7 +167,7 @@
       background: linear-gradient(
         105deg,
         transparent 20%,
-        rgba(255, 255, 255, 0.22) 50%,
+        rgba(255, 255, 255, 0.26) 50%,
         transparent 80%
       );
       pointer-events: none;
@@ -254,6 +261,7 @@
 
     .lt-slide-dots span.active-dot {
       background: #ffffff;
+      box-shadow: 0 0 8px var(--active-rgb);
       transform: scale(1.25);
     }
 
@@ -286,7 +294,8 @@
       color: #000000;
       font-weight: 800;
       font-size: 0.92rem;
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.75);
+      box-shadow: 0 0 18px var(--active-rgb), 0 0 8px #ffffff;
+      transition: box-shadow 0.3s ease;
     }
 
     .lt-text-group {
@@ -351,13 +360,15 @@
       width: 162px;
     }
 
-    /* 3D Coverflow Positions */
     .reel-card[data-pos="0"] {
       transform: translate3d(0%, 0px, 0px) rotateY(0deg) scale(1);
       opacity: 1;
       filter: brightness(1);
       z-index: 10;
-      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.95), 0 0 36px rgba(255, 255, 255, 0.45);
+      box-shadow:
+        0 22px 55px rgba(0, 0, 0, 0.95),
+        0 0 38px var(--active-rgb),
+        0 0 14px rgba(255, 255, 255, 0.5);
     }
 
     .reel-card[data-pos="1"] {
@@ -401,7 +412,7 @@
     }
 
     /* =====================================================================
-       BRIGHTER BLACK & WHITE AZERTY KEYBOARD + SHOCKWAVE RIPPLE
+       MECHANICAL RGB AZERTY KEYBOARD + 2D RADIAL MATRIX RIPPLE
        ===================================================================== */
     .kb-outer {
       width: 100%;
@@ -411,6 +422,7 @@
     }
 
     .keyboard-chassis {
+      position: relative;
       width: 100%;
       background: var(--kb-bg);
       border: 3px solid var(--kb-frame);
@@ -418,9 +430,14 @@
       padding: clamp(8px, 1.6vw, 20px);
       display: flex;
       gap: clamp(6px, 1.4vw, 18px);
-      box-shadow:
-        0 0 30px rgba(255, 255, 255, 0.12),
-        0 20px 60px rgba(0, 0, 0, 0.95);
+      animation: chassisUnderglow 8s linear infinite;
+    }
+
+    @keyframes chassisUnderglow {
+      0%, 100% { box-shadow: 0 0 32px rgba(255, 0, 128, 0.22), 0 20px 60px rgba(0, 0, 0, 0.95); }
+      25%      { box-shadow: 0 0 32px rgba(0, 240, 255, 0.22), 0 20px 60px rgba(0, 0, 0, 0.95); }
+      50%      { box-shadow: 0 0 32px rgba(0, 255, 136, 0.22), 0 20px 60px rgba(0, 0, 0, 0.95); }
+      75%      { box-shadow: 0 0 32px rgba(189, 0, 255, 0.22), 0 20px 60px rgba(0, 0, 0, 0.95); }
     }
 
     .kb-main {
@@ -451,6 +468,10 @@
     }
 
     .keycap {
+      --kx: 0;
+      --ky: 0;
+      --ripple-delay: 0ms;
+      --ripple-color: #00f0ff;
       position: relative;
       flex: 1;
       aspect-ratio: 1 / 1;
@@ -482,27 +503,67 @@
       border: 1.4px solid var(--key-inner);
       border-radius: clamp(4px, 0.7vw, 8px);
       pointer-events: none;
+      transition: border-color 0.22s ease, box-shadow 0.22s ease;
     }
 
+    /* Ambient Diagonal Mechanical RGB Spectrum Wave */
+    .keyboard-chassis.rgb-ambient .keycap:not(.active-key):not(.intro-lit) {
+      animation: ambientRgbWave 6s linear infinite;
+      animation-delay: calc((var(--kx) * -2.2s) - (var(--ky) * 0.9s));
+    }
+
+    @keyframes ambientRgbWave {
+      0%, 100% { border-color: #ff2a85; box-shadow: 0 0 9px rgba(255, 42, 133, 0.28); }
+      20%      { border-color: #ff9900; box-shadow: 0 0 9px rgba(255, 153, 0, 0.28); }
+      40%      { border-color: #00ff88; box-shadow: 0 0 9px rgba(0, 255, 136, 0.28); }
+      60%      { border-color: #00e5ff; box-shadow: 0 0 9px rgba(0, 229, 255, 0.28); }
+      80%      { border-color: #b744ff; box-shadow: 0 0 9px rgba(183, 68, 255, 0.28); }
+    }
+
+    /* 2D Radial RGB Ripple Wave Across Neighboring Keys */
+    .keycap.rgb-ripple {
+      animation: radialKeyFlash 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      animation-delay: var(--ripple-delay) !important;
+    }
+
+    @keyframes radialKeyFlash {
+      0% {
+        border-color: var(--key-outer);
+      }
+      32% {
+        background: rgba(255, 255, 255, 0.28);
+        border-color: var(--ripple-color);
+        box-shadow: 0 0 22px var(--ripple-color), inset 0 0 12px var(--ripple-color);
+        transform: translateY(-2.5px) scale(1.04);
+      }
+      100% {
+        background: #0a0a0d;
+        border-color: var(--key-outer);
+        box-shadow: 0 2px 6px rgba(255, 255, 255, 0.06);
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Expanding Neon Shockwave Ring on the Triggered Key Itself */
     .keycap.pulse-wave::before {
       content: "";
       position: absolute;
       inset: -2px;
       border-radius: inherit;
-      border: 2px solid #ffffff;
-      box-shadow: 0 0 18px #ffffff;
+      border: 2px solid var(--active-rgb);
+      box-shadow: 0 0 22px var(--active-rgb), 0 0 10px #ffffff;
       pointer-events: none;
       animation: keyShockwave 0.58s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     @keyframes keyShockwave {
-      0%   { opacity: 0.95; transform: scale(0.95); }
-      100% { opacity: 0; transform: scale(1.48); }
+      0%   { opacity: 1; transform: scale(0.95); }
+      100% { opacity: 0; transform: scale(1.55); }
     }
 
     .keycap:hover {
       background: #18181f;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 14px var(--active-rgb);
     }
 
     .keycap.pill {
@@ -524,29 +585,29 @@
     .keycap.w-fill  { flex: 1.5;  aspect-ratio: auto; }
 
     /* =====================================================================
-       SUBTLE DIMMING + STRONG NEON GLOW ON PRESSED OR INTRO-LIT KEY
+       SUBTLE DIMMING + STRONG RGB NEON GLOW ON PRESSED OR INTRO-LIT KEY
        ===================================================================== */
-    .keyboard-chassis.dim-mode .keycap:not(.active-key) {
-      opacity: 0.52;
+    .keyboard-chassis.dim-mode .keycap:not(.active-key):not(.rgb-ripple) {
+      opacity: 0.54;
     }
 
     .keycap.active-key,
     .keycap.intro-lit {
       opacity: 1 !important;
-      background: rgba(255, 255, 255, 0.36);
-      border-color: #ffffff;
+      background: rgba(255, 255, 255, 0.34);
+      border-color: #ffffff !important;
       box-shadow:
-        0 0 26px #ffffff,
-        0 0 12px rgba(255, 255, 255, 0.95),
-        inset 0 0 14px rgba(255, 255, 255, 0.9);
-      transform: translateY(-2px) scale(1.04);
+        0 0 28px var(--active-rgb),
+        0 0 14px #ffffff,
+        inset 0 0 16px var(--active-rgb) !important;
+      transform: translateY(-2px) scale(1.05);
       z-index: 3;
     }
 
     .keycap.active-key::after,
     .keycap.intro-lit::after {
       border-color: #ffffff;
-      box-shadow: inset 0 0 10px #ffffff;
+      box-shadow: inset 0 0 10px var(--active-rgb);
     }
 
     .multi-dots {
@@ -730,15 +791,15 @@
 
   <!-- Belgian AZERTY Keyboard -->
   <div class="kb-outer">
-    <div class="keyboard-chassis" id="kbChassis">
+    <div class="keyboard-chassis rgb-ambient" id="kbChassis">
 
       <div class="kb-main">
         <!-- Row 1: Desktop Function Pill Keys -->
         <div class="kb-row hide-mobile">
           <button type="button" class="keycap pill" data-esc="true"><span class="lbl-sm">esc</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">1</span><span class="lbl-br">f1</span></button>
-          <button type="button" class="keycap pill"><span class="lbl-tl">☼-</span><span class="lbl-br">f2</span></button>
-          <button type="button" class="keycap pill"><span class="lbl-tl">☼+</span><span class="lbl-br">f3</span></button>
+          <button type="button" class="keycap pill" data-rgb-toggle="true"><span class="lbl-tl">☼-</span><span class="lbl-br">f2</span></button>
+          <button type="button" class="keycap pill" data-rgb-Burst="true"><span class="lbl-tl">☼+</span><span class="lbl-br">f3</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">▭</span><span class="lbl-br">f4</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">⊞</span><span class="lbl-br">f5</span></button>
           <button type="button" class="keycap pill"><span class="lbl-tl">🔇</span><span class="lbl-br">f6</span></button>
@@ -757,606 +818,4 @@
           <button type="button" class="keycap w-half hide-mobile"><span class="lbl-tl">³</span><span class="lbl-bl">²</span></button>
           <button type="button" class="keycap"><span class="lbl-tl">1</span><span class="lbl-c">&amp;</span><span class="lbl-br">|</span></button>
           <button type="button" class="keycap" data-key="@"><span class="lbl-tl">2</span><span class="lbl-c">é</span><span class="lbl-br">@</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">3</span><span class="lbl-c">"</span><span class="lbl-br">#</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">4</span><span class="lbl-c">'</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">5</span><span class="lbl-c">(</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">6</span><span class="lbl-c">§</span><span class="lbl-br">^</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">7</span><span class="lbl-c">è</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">8</span><span class="lbl-c">!</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">9</span><span class="lbl-c">ç</span><span class="lbl-br">{</span></button>
-          <button type="button" class="keycap"><span class="lbl-tl">0</span><span class="lbl-c">à</span><span class="lbl-br">}</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">°</span><span class="lbl-c">)</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">-</span><span class="lbl-c">_</span></button>
-        </div>
-
-        <!-- Row 3: AZERTY Row -->
-        <div class="kb-row">
-          <button type="button" class="keycap w-tab hide-mobile"><span class="lbl-tl">|←</span><span class="lbl-bl">→|</span></button>
-          <button type="button" class="keycap" data-key="A"><span class="lbl-c">A</span></button>
-          <button type="button" class="keycap" data-key="Z"><span class="lbl-c">Z</span></button>
-          <button type="button" class="keycap" data-key="E"><span class="lbl-c">E</span></button>
-          <button type="button" class="keycap" data-key="R"><span class="lbl-c">R</span></button>
-          <button type="button" class="keycap" data-key="T"><span class="lbl-c">T</span></button>
-          <button type="button" class="keycap" data-key="Y"><span class="lbl-c">Y</span></button>
-          <button type="button" class="keycap" data-key="U"><span class="lbl-c">U</span></button>
-          <button type="button" class="keycap" data-key="I"><span class="lbl-c">I</span></button>
-          <button type="button" class="keycap" data-key="O"><span class="lbl-c">O</span></button>
-          <button type="button" class="keycap" data-key="P"><span class="lbl-c">P</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">¨</span><span class="lbl-c">^</span><span class="lbl-br">[</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">*</span><span class="lbl-c">$</span><span class="lbl-br">]</span></button>
-          <button type="button" class="keycap w-fill hide-mobile"><span class="lbl-tl">E</span><span class="lbl-c">µ</span><span class="lbl-br">`</span></button>
-        </div>
-
-        <!-- Row 4: QSDFGHJKLM Row -->
-        <div class="kb-row">
-          <button type="button" class="keycap w-caps hide-mobile"><span class="lbl-sm">shift lock</span></button>
-          <button type="button" class="keycap" data-key="Q"><span class="lbl-c">Q</span></button>
-          <button type="button" class="keycap" data-key="S"><span class="lbl-c">S</span></button>
-          <button type="button" class="keycap" data-key="D"><span class="lbl-c">D</span></button>
-          <button type="button" class="keycap" data-key="F"><span class="lbl-c">F</span></button>
-          <button type="button" class="keycap" data-key="G"><span class="lbl-c">G</span></button>
-          <button type="button" class="keycap" data-key="H"><span class="lbl-c">H</span></button>
-          <button type="button" class="keycap" data-key="J"><span class="lbl-c">J</span></button>
-          <button type="button" class="keycap" data-key="K"><span class="lbl-c">K</span></button>
-          <button type="button" class="keycap" data-key="L"><span class="lbl-c">L</span></button>
-          <button type="button" class="keycap" data-key="M"><span class="lbl-c">M</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">%</span><span class="lbl-c">ù</span><span class="lbl-br">´</span></button>
-          <button type="button" class="keycap w-fill hide-mobile"><span class="lbl-c">↵</span></button>
-        </div>
-
-        <!-- Row 5: WXCVBN Row (On mobile: ESC on left, W X C V B N in center, inactive . on right) -->
-        <div class="kb-row">
-          <button type="button" class="keycap w-shift hide-mobile"><span class="lbl-c">↑</span></button>
-          <button type="button" class="keycap mobile-only" style="flex: 1.65;" data-esc="true"><span class="lbl-sm" style="font-weight:700;">esc</span></button>
-          <button type="button" class="keycap" data-key="W"><span class="lbl-c">W</span></button>
-          <button type="button" class="keycap" data-key="X"><span class="lbl-c">X</span></button>
-          <button type="button" class="keycap" data-key="C"><span class="lbl-c">C</span></button>
-          <button type="button" class="keycap" data-key="V"><span class="lbl-c">V</span></button>
-          <button type="button" class="keycap" data-key="B"><span class="lbl-c">B</span></button>
-          <button type="button" class="keycap" data-key="N"><span class="lbl-c">N</span></button>
-          <button type="button" class="keycap mobile-only" style="flex: 1.65;"><span class="lbl-c">.</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">?</span><span class="lbl-c">,</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">.</span><span class="lbl-c">;</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">/</span><span class="lbl-c">:</span></button>
-          <button type="button" class="keycap hide-mobile"><span class="lbl-tl">+</span><span class="lbl-c">=</span><span class="lbl-br">~</span></button>
-          <button type="button" class="keycap w-fill hide-mobile"></button>
-        </div>
-
-        <!-- Row 6: Bottom Space & Arrows -->
-        <div class="kb-row hide-mobile">
-          <button type="button" class="keycap w-ctrl"><span class="lbl-sm">ctrl</span></button>
-          <button type="button" class="keycap w-ctrl"><span class="lbl-sm">fn</span></button>
-          <button type="button" class="keycap w-ctrl" aria-label="Win">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="#ffffff">
-              <polygon points="0,2.2 6.8,1.2 6.8,7.6 0,7.6"/><polygon points="7.6,1.1 16,0 16,7.6 7.6,7.6"/>
-              <polygon points="0,8.4 6.8,8.4 6.8,14.8 0,13.8"/><polygon points="7.6,8.4 16,8.4 16,16 7.6,14.9"/>
-            </svg>
-          </button>
-          <button type="button" class="keycap w-ctrl"><span class="lbl-sm">alt gr</span></button>
-          <button type="button" class="keycap w-space" data-clear="true"></button>
-          <button type="button" class="keycap w-ctrl"><span class="lbl-sm">alt gr</span></button>
-          <button type="button" class="keycap w-ctrl"><span class="lbl-tl">&gt;</span><span class="lbl-c">&lt;</span><span class="lbl-br">\</span></button>
-          <button type="button" class="keycap" data-cycle="-1"><span class="lbl-c">‹</span></button>
-          <div class="split-arrows">
-            <button type="button" class="keycap" data-cycle="-1">▲</button>
-            <button type="button" class="keycap" data-cycle="1">▼</button>
-          </div>
-          <button type="button" class="keycap" data-cycle="1"><span class="lbl-c">›</span></button>
-        </div>
-      </div>
-
-      <!-- Right Numpad Block -->
-      <div class="kb-numpad">
-        <div class="kb-row">
-          <button type="button" class="keycap pill"></button>
-          <button type="button" class="keycap pill"></button>
-          <button type="button" class="keycap pill"></button>
-          <button type="button" class="keycap pill"></button>
-        </div>
-        <div class="numpad-grid">
-          <button type="button" class="keycap"><span class="lbl-sm" style="line-height:1.05; text-align:center;">num<br>lock</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">/</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">*</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">-</span></button>
-
-          <button type="button" class="keycap"><span class="lbl-c">7</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">8</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">9</span></button>
-          <button type="button" class="keycap" style="grid-row: span 2;"><span class="lbl-c">+</span></button>
-
-          <button type="button" class="keycap"><span class="lbl-c">4</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">6</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">5</span></button>
-
-          <button type="button" class="keycap"><span class="lbl-c">1</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">2</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">3</span></button>
-          <button type="button" class="keycap" style="grid-row: span 2;"><span class="lbl-c">↵</span></button>
-
-          <button type="button" class="keycap" style="grid-column: span 2;"><span class="lbl-c">0</span></button>
-          <button type="button" class="keycap"><span class="lbl-c">.</span></button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    // =========================================================================
-    // 1. MEMORIES DATA
-    // =========================================================================
-    const KEY_MEMORIES = {
-      "A": { title: "Anniversary", sub: "Celebrating us and every milestone with my sayang.", files: ["anniversary celebrating.jpeg"] },
-      "@": { title: "Always & Forever", sub: "Celebrating us and every milestone with my sayang.", files: ["anniversary celebrating.jpeg"] },
-      "B": { title: "Birthday Celebration", sub: "Candlelight, cake, and making a wish together.", files: ["birthdaycelebration.jpeg"] },
-      "C": { title: "Cycling in Singapore", sub: "Riding through a beautiful park full of hidden treasures.", files: ["cycling.jpeg"] },
-      "D": { title: "Disney Date", sub: "Cozying up, talking, and reading Disney stories together.", files: ["disneydate.jpeg"] },
-      "E": { title: "Dinner Dates", sub: "Dinner dates are the best fr — since I'm not big on Indonesian food, we always make sure we eat good.", files: ["eating1.jpeg", "eating2.jpeg"] },
-      "F": { title: "Food Festival", sub: "The moment that finally made me fall in love with Indonesian food.", files: ["food festival.jpeg"] },
-      "G": { title: "Game Time", sub: "Being passionate and trying out a game together for the first time.", files: ["game.jpeg"] },
-      "H": { title: "Ocarina Beach Hike", sub: "Walking along the seaside together at Ocarina Beach Resort.", files: ["hike.jpeg"] },
-      "I": { title: "Ice Skating", sub: "Cooling off from the heat", files: ["iceskating.jpeg"] },
-      "J": { title: "Jeep Ride", sub: "Our first and coldest adventure together.", files: ["jeepride.jpeg"] },
-      "K": { title: "Kart Racing", sub: "We beat every single child on the track.", files: ["kart.jpeg"] },
-      "L": { title: "Light Show", sub: "A night full of glowing lights — as beautiful as you.", files: ["lightshow.jpeg", "lightshow2.jpeg"] },
-      "M": { title: "Movie Night", sub: "Lean back, popcorn and enjoy", files: ["moviedate.jpeg"] },
-      "N": { title: "New Year's Eve", sub: "Riding in the new year together", files: ["newyearcelebrations.jpeg"] },
-      "O": { title: "Island Hopping", sub: "Exploring Bintan and it's peaceful beauty", files: ["oceanview.jpeg"] },
-      "P": { title: "Photobooth", sub: "Capturing our memories with extra attributes.", files: ["photobooth.jpeg", "photobooth2.jpeg"] },
-      "Q": { title: "Quality Time", sub: "No rush, no distractions — just us.", files: ["qualitytime.jpeg", "qualitytime2.jpeg"] },
-      "R": { title: "Reading Together", sub: "Quiet bookstore moments, was fun.", files: ["read.jpeg"] },
-      "S": { title: "Singapore", sub: "Welcome to Singapore, we aren't singa yet", files: ["singapore.jpeg", "singapore2.jpeg"] },
-      "T": { title: "Prambanan, Jogja", sub: "Temple run through Prambanan temples", files: ["templerun.jpeg"] },
-      "U": { title: "Universal Studios", sub: "Pure, endless joy from start to finish.", files: ["universalstudios.jpeg"] },
-      "V": { title: "Kawah Ijen", sub: "We reached the top and had a breathtaking view, thank you sayang!", files: ["volcano.jpeg"] },
-      "W": { title: "Waterpark", sub: "It was fun, chaotic, and something totally different.", files: ["waterpark.jpeg"] },
-      "X": { title: "X-plore", sub: "Because each time we meet, we need to catch up and make new memories.", files: ["explore.jpeg"] },
-      "Y": { title: "Yapping", sub: "Endless talks together.", files: ["yapping.jpeg"] },
-      "Z": { title: "Zen", sub: "Peace is just being right there with you, sayang.", files: ["zen.jpeg"] }
-    };
-
-    function createImageWithFallback(filename, altText) {
-      const img = document.createElement("img");
-      img.alt = altText;
-      const encoded = encodeURIComponent(filename);
-      const paths = [encoded, `memories/${encoded}`, `public/memories/${encoded}`];
-      let tryIdx = 0;
-      img.onerror = () => {
-        tryIdx++;
-        if (tryIdx < paths.length) img.src = paths[tryIdx];
-      };
-      img.src = paths[0];
-      return img;
-    }
-
-    function preloadAllImages() {
-      const seen = new Set();
-      Object.values(KEY_MEMORIES).forEach((entry) => {
-        entry.files.forEach((file) => {
-          if (seen.has(file)) return;
-          seen.add(file);
-          createImageWithFallback(file, "");
-        });
-      });
-    }
-
-    // =========================================================================
-    // 2. 3D INTRO ANIMATION & 3D COVERFLOW ESCAPE REEL
-    // =========================================================================
-    const INTRO_WORDS  = ["AULI@", "I", "LOVE", "YOU", "CUZ", "YOU", "ARE", "SPECIAL"];
-    const LETTER_DELAY = 340;
-    const WORD_HOLD    = 820;
-    const REEL_STEP_MS = 640; // Time per step in the 3D Coverflow reel
-
-    let introTimers = [];
-    let flashTimers = [];
-    let isReelPlaying = false;
-    let currentKey = null;
-    let currentSlideIdx = 0;
-    let autoSwipeTimer = null;
-
-    const chassis = document.getElementById("kbChassis");
-    const lowerthirdBox = document.getElementById("lowerthirdBox");
-    const introBanner = document.getElementById("introWordBanner");
-    const sliderTrack = document.getElementById("ltSliderTrack");
-    const slideDots = document.getElementById("ltSlideDots");
-    const keyPill = document.getElementById("ltKeyPill");
-    const reelDeck = document.getElementById("reelDeck");
-
-    function triggerKeyShockwave(k) {
-      document.querySelectorAll(`.keycap[data-key="${k}"]`).forEach((btn) => {
-        btn.classList.remove("pulse-wave");
-        void btn.offsetWidth;
-        btn.classList.add("pulse-wave");
-      });
-    }
-
-    function highlightMatchingKeys(k) {
-      document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
-      document.querySelectorAll(`.keycap[data-key="${k}"]`).forEach((el) => el.classList.add("active-key"));
-      triggerKeyShockwave(k);
-    }
-
-    function stopIntroAnimation() {
-      introTimers.forEach(clearTimeout);
-      introTimers = [];
-      document.querySelectorAll(".keycap.intro-lit").forEach((el) => el.classList.remove("intro-lit"));
-      introBanner.classList.remove("active", "word-complete", "word-exit");
-      introBanner.innerHTML = "";
-    }
-
-    function stopAlphabetFlash() {
-      flashTimers.forEach(clearTimeout);
-      flashTimers = [];
-      isReelPlaying = false;
-      reelDeck.classList.remove("active");
-      reelDeck.innerHTML = "";
-    }
-
-    function playIntroSequence() {
-      stopAlphabetFlash();
-      stopIntroAnimation();
-      clearSelection();
-
-      introBanner.classList.add("active");
-      let elapsed = 220;
-
-      INTRO_WORDS.forEach((word) => {
-        const startWordTimer = setTimeout(() => {
-          document.querySelectorAll(".keycap.intro-lit").forEach((el) => el.classList.remove("intro-lit"));
-          introBanner.classList.remove("word-complete", "word-exit");
-          introBanner.innerHTML = "";
-        }, elapsed);
-        introTimers.push(startWordTimer);
-
-        word.split("").forEach((ch) => {
-          elapsed += LETTER_DELAY;
-          const letterTimer = setTimeout(() => {
-            document.querySelectorAll(`.keycap[data-key="${ch}"]`).forEach((btn) => {
-              btn.classList.add("intro-lit");
-            });
-            triggerKeyShockwave(ch);
-
-            const span = document.createElement("span");
-            span.className = "intro-letter";
-            span.textContent = ch === "@" ? "A" : ch;
-            introBanner.appendChild(span);
-          }, elapsed);
-          introTimers.push(letterTimer);
-        });
-
-        const pulseTimer = setTimeout(() => {
-          introBanner.classList.add("word-complete");
-        }, elapsed + 160);
-        introTimers.push(pulseTimer);
-
-        const exitTimer = setTimeout(() => {
-          introBanner.classList.remove("word-complete");
-          introBanner.classList.add("word-exit");
-        }, elapsed + WORD_HOLD - 220);
-        introTimers.push(exitTimer);
-
-        elapsed += WORD_HOLD;
-      });
-
-      const endTimer = setTimeout(() => {
-        stopIntroAnimation();
-      }, elapsed + 150);
-      introTimers.push(endTimer);
-    }
-
-    // 3D Coverflow Card Stream for ESC (1 Card per Letter; Double-Photo Cards Swipe Internally!)
-    function playAlphabetFlash() {
-      if (isReelPlaying) {
-        stopAlphabetFlash();
-        clearSelection();
-        return;
-      }
-
-      stopIntroAnimation();
-      stopAlphabetFlash();
-      clearInterval(autoSwipeTimer);
-      lowerthirdBox.classList.remove("visible");
-      isReelPlaying = true;
-
-      const alphabetKeys = Object.keys(KEY_MEMORIES)
-        .filter((k) => /^[A-Z]$/.test(k))
-        .sort();
-
-      reelDeck.innerHTML = "";
-      reelDeck.classList.add("active");
-
-      // Create exactly ONE 3D card per letter (A-Z) with an internal slider track
-      const cardObjs = alphabetKeys.map((k, idx) => {
-        const entry = KEY_MEMORIES[k];
-        const card = document.createElement("div");
-        card.className = "reel-card";
-        card.dataset.pos = idx === 0 ? "0" : idx === 1 ? "1" : idx === 2 ? "2" : "far-right";
-
-        const photoWrap = document.createElement("div");
-        photoWrap.className = "lt-photo-wrap";
-
-        const track = document.createElement("div");
-        track.className = "lt-slider-track";
-
-        entry.files.forEach((file, fIdx) => {
-          const slide = document.createElement("div");
-          slide.className = "lt-slide" + (fIdx === 0 ? " active-slide" : "");
-          slide.appendChild(createImageWithFallback(file, entry.title));
-          track.appendChild(slide);
-        });
-        photoWrap.appendChild(track);
-
-        let dotsWrap = null;
-        if (entry.files.length > 1) {
-          dotsWrap = document.createElement("div");
-          dotsWrap.className = "lt-slide-dots show";
-          entry.files.forEach((_, dIdx) => {
-            const dot = document.createElement("span");
-            if (dIdx === 0) dot.classList.add("active-dot");
-            dotsWrap.appendChild(dot);
-          });
-          photoWrap.appendChild(dotsWrap);
-        }
-
-        const info = document.createElement("div");
-        info.className = "lt-info";
-        info.innerHTML = `
-          <div class="lt-top-row">
-            <span class="lt-key-pill">${k}</span>
-          </div>
-          <div class="lt-text-group">
-            <div class="lt-title">${entry.title}</div>
-            <div class="lt-sub">${entry.sub}</div>
-          </div>
-        `;
-
-        card.appendChild(photoWrap);
-        card.appendChild(info);
-        reelDeck.appendChild(card);
-
-        return { k, entry, card, track, dotsWrap };
-      });
-
-      let elapsed = 0;
-
-      cardObjs.forEach((item, activeIdx) => {
-        // 1. Bring this letter's card to the front of the 3D Coverflow
-        const cardArrivalTimer = setTimeout(() => {
-          chassis.classList.add("dim-mode");
-          highlightMatchingKeys(item.k);
-
-          cardObjs.forEach((other, cIdx) => {
-            const diff = cIdx - activeIdx;
-            if (diff === 0) other.card.dataset.pos = "0";
-            else if (diff === 1) other.card.dataset.pos = "1";
-            else if (diff === 2) other.card.dataset.pos = "2";
-            else if (diff === -1) other.card.dataset.pos = "-1";
-            else if (diff === -2) other.card.dataset.pos = "-2";
-            else if (diff > 2) other.card.dataset.pos = "far-right";
-            else other.card.dataset.pos = "far-left";
-          });
-        }, elapsed);
-        flashTimers.push(cardArrivalTimer);
-
-        // 2. If this letter has 2+ photos, swipe the photo inside the centered card before moving on
-        if (item.entry.files.length > 1) {
-          for (let fIdx = 1; fIdx < item.entry.files.length; fIdx++) {
-            elapsed += REEL_STEP_MS;
-            const swipeTimer = setTimeout(() => {
-              item.track.style.transform = `translateX(-${fIdx * 100}%)`;
-              const slides = item.track.querySelectorAll(".lt-slide");
-              slides.forEach((s, sIdx) => s.classList.toggle("active-slide", sIdx === fIdx));
-              if (item.dotsWrap) {
-                const dots = item.dotsWrap.querySelectorAll("span");
-                dots.forEach((d, dIdx) => d.classList.toggle("active-dot", dIdx === fIdx));
-              }
-            }, elapsed);
-            flashTimers.push(swipeTimer);
-          }
-        }
-
-        elapsed += REEL_STEP_MS;
-      });
-
-      // Settle on the final 'Z' card when the 3D cascade finishes
-      const finishTimer = setTimeout(() => {
-        stopAlphabetFlash();
-        selectKey("Z");
-      }, elapsed + 350);
-      flashTimers.push(finishTimer);
-    }
-
-    document.querySelectorAll("[data-esc]").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        playAlphabetFlash();
-      });
-    });
-
-    // =========================================================================
-    // 3. SINGLE KEY SELECTION & AUTO-SWIPE CAROUSEL
-    // =========================================================================
-    document.querySelectorAll(".keycap[data-key]").forEach((btn) => {
-      const k = btn.dataset.key;
-      const entry = KEY_MEMORIES[k];
-      if (entry && entry.files && entry.files.length > 1) {
-        btn.classList.add("has-dots");
-        const dots = document.createElement("div");
-        dots.className = "multi-dots";
-        dots.innerHTML = "<span></span>".repeat(entry.files.length);
-        btn.appendChild(dots);
-      }
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        selectKey(k);
-      });
-    });
-
-    document.querySelectorAll("[data-clear]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        stopAlphabetFlash();
-        clearSelection();
-      });
-    });
-
-    document.querySelectorAll("[data-cycle]").forEach((btn) => {
-      btn.addEventListener("click", () => stepSlide(parseInt(btn.dataset.cycle, 10)));
-    });
-
-    function selectKey(k) {
-      const entry = KEY_MEMORIES[k];
-      if (!entry) return;
-
-      const wasReel = isReelPlaying;
-      stopIntroAnimation();
-      stopAlphabetFlash();
-
-      if (!wasReel && currentKey === k && entry.files.length > 1) {
-        stepSlide(1);
-        return;
-      }
-
-      currentKey = k;
-      currentSlideIdx = 0;
-
-      chassis.classList.add("dim-mode");
-      highlightMatchingKeys(k);
-
-      renderLowerThird(k, entry, true);
-    }
-
-    function renderLowerThird(k, entry, enableAutoSwipe = true) {
-      clearInterval(autoSwipeTimer);
-
-      lowerthirdBox.classList.remove("visible", "shine");
-      void lowerthirdBox.offsetWidth;
-      lowerthirdBox.classList.add("visible", "shine");
-
-      sliderTrack.style.transition = "none";
-      sliderTrack.innerHTML = "";
-      sliderTrack.style.transform = "translateX(0%)";
-
-      entry.files.forEach((file, idx) => {
-        const slide = document.createElement("div");
-        slide.className = "lt-slide" + (idx === 0 ? " active-slide" : "");
-        slide.appendChild(createImageWithFallback(file, entry.title));
-        sliderTrack.appendChild(slide);
-      });
-
-      void sliderTrack.offsetWidth;
-      sliderTrack.style.transition = "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)";
-
-      slideDots.innerHTML = "";
-      if (entry.files.length > 1) {
-        slideDots.classList.add("show");
-        entry.files.forEach((_, idx) => {
-          const dot = document.createElement("span");
-          if (idx === 0) dot.classList.add("active-dot");
-          slideDots.appendChild(dot);
-        });
-
-        if (enableAutoSwipe) {
-          autoSwipeTimer = setInterval(() => {
-            stepSlide(1, false);
-          }, 2600);
-        }
-      } else {
-        slideDots.classList.remove("show");
-      }
-
-      keyPill.textContent = k === "@" ? "2 é @" : k;
-      document.getElementById("ltTitle").textContent = entry.title;
-      document.getElementById("ltSub").textContent = entry.sub;
-    }
-
-    function stepSlide(dir, resetTimer = true) {
-      if (!currentKey || !KEY_MEMORIES[currentKey] || isReelPlaying) return;
-      const files = KEY_MEMORIES[currentKey].files;
-      if (!files || files.length <= 1) return;
-
-      currentSlideIdx = (currentSlideIdx + dir + files.length) % files.length;
-      sliderTrack.style.transform = `translateX(-${currentSlideIdx * 100}%)`;
-
-      const slides = sliderTrack.querySelectorAll(".lt-slide");
-      slides.forEach((s, idx) => s.classList.toggle("active-slide", idx === currentSlideIdx));
-
-      const dots = slideDots.querySelectorAll("span");
-      dots.forEach((d, idx) => d.classList.toggle("active-dot", idx === currentSlideIdx));
-
-      if (resetTimer) {
-        clearInterval(autoSwipeTimer);
-        autoSwipeTimer = setInterval(() => stepSlide(1, false), 2600);
-      }
-    }
-
-    function clearSelection() {
-      clearInterval(autoSwipeTimer);
-      currentKey = null;
-      chassis.classList.remove("dim-mode");
-      document.querySelectorAll(".keycap.active-key").forEach((el) => el.classList.remove("active-key"));
-      lowerthirdBox.classList.remove("visible", "shine");
-    }
-
-    lowerthirdBox.addEventListener("click", () => stepSlide(1, true));
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        playAlphabetFlash();
-      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-        stepSlide(1, true);
-      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-        stepSlide(-1, true);
-      } else if (e.key === "@" || e.key === "2" || e.key === "é") {
-        selectKey("@");
-      } else if (/^[a-zA-Z]$/.test(e.key)) {
-        selectKey(e.key.toUpperCase());
-      }
-    });
-
-    // =========================================================================
-    // 4. DOUBLE-TAP / DOUBLE-CLICK OUTSIDE KEYBOARD FOR FULLSCREEN
-    // =========================================================================
-    function toggleFullscreen() {
-      const doc = document;
-      const elem = doc.documentElement;
-      if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen().catch(() => {});
-        } else if (elem.webkitRequestFullscreen) {
-          elem.webkitRequestFullscreen();
-        }
-      } else {
-        if (doc.exitFullscreen) {
-          doc.exitFullscreen().catch(() => {});
-        } else if (doc.webkitExitFullscreen) {
-          doc.webkitExitFullscreen();
-        }
-      }
-    }
-
-    let lastOutsideTap = 0;
-    document.addEventListener("pointerup", (e) => {
-      if (
-        e.target.closest("#kbChassis") ||
-        e.target.closest("#lowerthirdBox") ||
-        e.target.closest("#reelDeck")
-      ) {
-        return;
-      }
-      const now = Date.now();
-      if (now - lastOutsideTap < 320) {
-        toggleFullscreen();
-        lastOutsideTap = 0;
-      } else {
-        lastOutsideTap = now;
-      }
-    });
-
-    window.addEventListener("DOMContentLoaded", () => {
-      preloadAllImages();
-      playIntroSequence();
-    });
-  </script>
-</body>
-</html>
+          <button type="button" class="keycap"><span class="lbl-tl">3</span><span class="lbl-c">"</span><span class="lbl-br">#</span></button
